@@ -39,6 +39,27 @@ describe('Unquery array parser', () => {
     })
   })
 
+  it('should work with date', () => {
+    const toParse = '?date=2020-01-01,2020-02-01'
+    const unquery = Unquery(
+      toParse,
+      {
+        date: Unquery.array(Unquery.date('YYYY-MM-DD'))
+      },
+      { arrayFormat: 'comma' }
+    )
+
+    expect(unquery).toEqual({
+      date: [new Date('2020-01-01'), new Date('2020-02-01')]
+    })
+    expect(unquery.stringify({ arrayFormat: 'index' })).toBe(
+      'date[0]=2020-01-01&date[1]=2020-02-01'
+    )
+    expect(unquery.stringify({ arrayFormat: 'comma' })).toBe(
+      'date=2020-01-01,2020-02-01'
+    )
+  })
+
   it('should stringify array', () => {
     const toParse = '?bracketArray[]=1&bracketArray[]=2'
     const unquery = Unquery(
