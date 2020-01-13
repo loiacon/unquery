@@ -2,23 +2,6 @@ import { UnqueryArrayOptions, UnqueryDateOptions } from './types'
 import { unqueryOptions } from './unquery'
 import { dateTokens } from './utils/date'
 
-const arrayFormatter = (
-  arr: unknown[],
-  key: string,
-  arrayFormat: UnqueryArrayOptions['arrayFormat']
-) => {
-  switch (arrayFormat) {
-    case 'comma':
-      return `${key}=${arr.join(',')}`
-    case 'index':
-      return arr.map((value, index) => `${key}[${index}]=${value}`).join('&')
-    case 'bracket':
-      return arr.map(value => `${key}[]=${value}`).join('&')
-    default:
-      return arr.map(value => `${key}=${value}`).join('&')
-  }
-}
-
 const parseZero = (value: number) => `0${value}`.slice(-2)
 
 const dateFormatter = (date: Date, key: string, pattern: string) => {
@@ -40,7 +23,51 @@ const dateFormatter = (date: Date, key: string, pattern: string) => {
     }
   }
 
+  if (!key) {
+    return pattern
+  }
   return `${key}=${pattern}`
+}
+
+const createPairFunction = (arr: unknown[], pattern: string) => {
+  const createPair = (key: (index: number) => string) => {
+    return arr
+      .map((value, index) => {
+        const pairKey = key(index)
+
+        if (value instanceof Date) {
+          return dateFormatter(value, pairKey, pattern)
+        }
+        return `${pairKey}=${value}`
+      })
+      .join('&')
+  }
+
+  return createPair
+}
+
+const arrayFormatter = (
+  arr: unknown[],
+  key: string,
+  arrayFormat: UnqueryArrayOptions['arrayFormat'],
+  pattern?: string
+) => {
+  const createPair = createPairFunction(arr, pattern)
+
+  switch (arrayFormat) {
+    case 'comma':
+      return `${key}=${arr
+        .map(value =>
+          value instanceof Date ? dateFormatter(value, '', pattern) : value
+        )
+        .join(',')}`
+    case 'index':
+      return createPair(i => `${key}[${i}]`)
+    case 'bracket':
+      return createPair(() => `${key}[]`)
+    default:
+      return createPair(() => `${key}`)
+  }
 }
 
 type StringifyOptions = UnqueryArrayOptions & UnqueryDateOptions
@@ -63,7 +90,7 @@ export function stringify(options: StringifyOptions) {
         return ''
       }
       if (Array.isArray(value)) {
-        return arrayFormatter(value, key, arrayFormat)
+        return arrayFormatter(value, key, arrayFormat, pattern)
       }
       if (value instanceof Date) {
         return dateFormatter(value, key, pattern)
