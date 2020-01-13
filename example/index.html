@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Unquery Example</title>
+
+  <style>
+    code {
+      background-color: #EDF2F7;
+      border-radius: 4px;
+      display: inline-block;
+      padding: 1.25rem 1rem 1.35rem;
+      color: #2D3748;
+    }
+
+    code b {
+      display: block;
+      padding-bottom: 0.25rem;
+    }
+  </style>
+</head>
+<body>
+  <h2>Unquery example</h2>
+  <code>
+    <b>Query</b>
+    <div id="query">?foo=10&bar=20</div>
+    <br>
+    <b>Result</b>
+    <div id="result"></div>
+  </code>
+
+  <script src="../dist/index.js"></script>
+  <script type="module">
+    import Unquery from '../dist/index.es.js'
+
+    const query = document.getElementById('query').innerText
+    const result = document.getElementById('result')
+
+    const unquery = Unquery(query, {
+      foo: Unquery.number(),
+      bar: Unquery.string()
+    })
+
+    result.innerHTML += JSON.stringify(unquery, null, '\t')
+    console.log(unquery)
+  </script>
+</body>
+</html>
