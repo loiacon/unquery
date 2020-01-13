@@ -17,10 +17,10 @@ export const unqueryOptions: UnqueryOptions = {
   skipUnknown: true
 }
 
-const Unquery = <T extends object, U extends UnqueryOptions>(
+const Unquery = <T extends object>(
   input: string,
   shape: T,
-  options?: U
+  options?: UnqueryOptions
 ) => {
   options = {
     ...unqueryOptions,
