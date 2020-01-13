@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "dist",
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "lib": ["ESNext", "DOM"],
+    "types": ["jest", "node"],
+    "rootDir": ".",
+    "esModuleInterop": true,
+    "paths": {
+      "@unquery/*": ["packages/*/src"]
+    }
+  },
+  "exclude": ["node_modules"]
+}
