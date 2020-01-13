@@ -9,10 +9,7 @@
     "lib": ["ESNext", "DOM"],
     "types": ["jest", "node"],
     "rootDir": ".",
-    "esModuleInterop": true,
-    "paths": {
-      "@unquery/*": ["packages/*/src"]
-    }
+    "esModuleInterop": true
   },
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "dist", "**/__tests__"]
 }
