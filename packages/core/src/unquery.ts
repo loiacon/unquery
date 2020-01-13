@@ -7,7 +7,7 @@ import {
   UnqueryType,
   UnqueryTypeReturn
 } from './types'
-import { stringify } from './utilities'
+import { stringify } from './stringify'
 
 // Unquery options
 export const unqueryOptions: UnqueryOptions = {
@@ -75,7 +75,9 @@ Unquery.bool = (): boolean => ({ type: UnqueryType.bool } as any)
 
 Unquery.date = (pattern?: string): Date =>
   ({ type: UnqueryType.date, pattern } as any)
-Unquery.array = <T extends string | number>(innerType?: T): T[] => {
+Unquery.array = <T extends string | number | boolean | Date>(
+  innerType?: T
+): T[] => {
   return {
     type: UnqueryType.array,
     innerType: innerType || UnqueryType.string
