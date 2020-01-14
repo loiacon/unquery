@@ -37,7 +37,8 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 'off',
     'no-restricted-globals': 'off',
     'no-plusplus': 'off',
-    'no-bitwise': 'off'
+    'no-bitwise': 'off',
+    'no-unused-expressions': ['error', { allowShortCircuit: true }]
   },
   settings: {
     'import/resolver': {
