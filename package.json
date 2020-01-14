@@ -30,9 +30,6 @@
   "description": "Build and control queries with confidence.",
   "main": "dist/index.js",
   "types": "dist/packages/core/index.d.ts",
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/loiacon"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/loiacon/unquery.git"
