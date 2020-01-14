@@ -1,4 +1,4 @@
-import { unqueryOptions } from './unquery'
+import { unqueryOptions } from './unqueryOptions'
 import {
   UnqueryType,
   UnqueryOptions,

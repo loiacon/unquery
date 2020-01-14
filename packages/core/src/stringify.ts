@@ -1,5 +1,5 @@
 import { UnqueryArrayOptions, UnqueryDateOptions } from './types'
-import { unqueryOptions } from './unquery'
+import { unqueryOptions } from './unqueryOptions'
 import { dateTokens } from './utils/date'
 
 const parseZero = (value: number) => `0${value}`.slice(-2)
@@ -70,7 +70,7 @@ const arrayFormatter = (
   }
 }
 
-type StringifyOptions = UnqueryArrayOptions & UnqueryDateOptions
+export type StringifyOptions = UnqueryArrayOptions & UnqueryDateOptions
 const stringifyOptions = (): StringifyOptions => ({
   arrayFormat: unqueryOptions.arrayFormat,
   pattern: unqueryOptions.pattern
