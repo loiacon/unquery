@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { splitOnFirst, extend } from './utils'
+import { splitOnFirst } from './utils'
 import { parser, parseKey } from './parser'
 import {
   UnqueryObject,
@@ -7,14 +7,14 @@ import {
   UnqueryType,
   UnqueryTypeReturn
 } from './types'
+import { unqueryOptions, setOptions } from './unqueryOptions'
 import { stringify } from './stringify'
+import { addLocationURL, clearLocationURL } from './locationURL'
 
-// Unquery options
-export const unqueryOptions: UnqueryOptions = {
-  pattern: 'YYYY-MM-DD',
-  arrayFormat: 'none',
-  skipNull: false,
-  skipUnknown: true
+const unqueryMethods = {
+  stringify,
+  addLocationURL,
+  clearLocationURL
 }
 
 const Unquery = <T extends object>(
@@ -27,7 +27,7 @@ const Unquery = <T extends object>(
     ...((options as any) || {})
   }
   const { skipNull = false, skipUnknown = true, arrayFormat = 'none' } = options
-  const ret: UnqueryObject<T> = Object.create({ stringify })
+  const ret: UnqueryObject<T> = Object.create(unqueryMethods)
 
   if (typeof input !== 'string') {
     return ret
@@ -60,13 +60,7 @@ const Unquery = <T extends object>(
   return ret
 }
 
-/**
- * Set default options to be reused in all unquery strings
- */
-Unquery.setOptions = (options: UnqueryOptions) => {
-  extend(unqueryOptions, options)
-  return unqueryOptions
-}
+Unquery.setOptions = setOptions
 
 // Unquery primitives
 Unquery.string = (): string => ({ type: UnqueryType.string } as any)

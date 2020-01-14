@@ -1,3 +1,6 @@
+import { stringify } from './stringify'
+import { addLocationURL, clearLocationURL } from './locationURL'
+
 export enum UnqueryType {
   string = 1,
   number,
@@ -26,7 +29,9 @@ export interface UnqueryOptions
 export type UnqueryObject<T extends object> = {
   [k in keyof T]?: T[k]
 } & {
-  stringify(options?: UnqueryArrayOptions & UnqueryDateOptions): string
+  stringify: typeof stringify
+  addLocationURL: typeof addLocationURL
+  clearLocationURL: typeof clearLocationURL
 }
 
 export type UnqueryTypeReturn = {
