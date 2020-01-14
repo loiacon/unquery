@@ -106,9 +106,9 @@ Options to customize the schema that's gonna be generated.
     "ss": "Seconds"
   }
   ```
-  
+
  <br>
-  
+
 - **arrayFormat**
   - **Description** Array format to parse query-string. Use the same format used by [query-string](https://github.com/sindresorhus/query-string).
   - **Type** `string`
@@ -119,10 +119,10 @@ Options to customize the schema that's gonna be generated.
   "index": "foo[0]=1&foo[1]=2&foo[3]=3"
   "comma": "foo=1,2,3"
   "none": "foo=1&foo=2&foo=3"
-  ``` 
-  
-<br>  
-  
+  ```
+
+<br>
+
 - **skipNull**
   - **Description** Skip `null` values to be parsed.
   - **Type** `boolean`
@@ -132,7 +132,7 @@ Options to customize the schema that's gonna be generated.
     value: Unquery.number(),
     notInQueryValue: Unquery.string()
   }, { skipNull: false })
-  
+
   // { value: 123, notInQueryValue: null }
   ```
   ```js
@@ -140,12 +140,12 @@ Options to customize the schema that's gonna be generated.
     value: Unquery.number(),
     notInQueryValue: Unquery.string()
   }, { skipNull: true })
-  
+
   // { value: 123 }
   ```
- 
+
  <br>
- 
+
 - **skipUnknown**
   - **Description** Skip `unknown` values to be parsed.
   - **Type** `boolean`
@@ -154,13 +154,88 @@ Options to customize the schema that's gonna be generated.
   Unquery('?value=foo&unknown=bar', {
     value: Unquery.string()
   }, { skipUnknown: false })
-  
+
   // { value: "foo", unknown: "bar" }
   ```
   ```js
   Unquery('?value=foo&unknown=bar', {
     value: Unquery.string()
   }, { skipUnknown: true })
-  
+
   // { value: "foo" }
+  ```
+
+### Unquery Methods
+When you create an `Unquery Object`, your query will receive some super powers ⚡️!
+
+```js
+const query = Unquery(...) // query is an Unquery Object
+```
+
+#### Methods
+- **stringify**
+  - **Description** stringify your object and return his value
+  - **Type** `(options: StringifyOptions) => string`
+  - **Default**
+  ```js
+  {
+    // You can set your unqueryOptions by calling Unquery.setOptions(options)
+    arrayFormat: unqueryOptions.arrayFormat // default: 'none',
+    pattern: unqueryOptions.pattern // default: 'YYYY-MM-DD'
+  }
+  ```
+  - **Examples**
+  ```js
+  const query = Unquery('?startDate=2020-01-01&viewId=4', {
+    startDate: Unquery.date(),
+    viewId: Unquery.number()
+  })
+  // { startDate: [object Date], viewId: 4 }
+
+  const parsedQuery = query.stringify({ pattern: 'DD/MM/YYYY' })
+  // "startDate=01/01/2020&viewId=4"
+  ```
+
+- **addLocationURL**
+  - **Description** Add query-string to URL without reload the page. Under the hood, this call `stringify` method, so, you can pass all StringifyOptions in second parameter.
+  - **Type** `(callback: () => void, options: StringifyOptions)`
+  - **Default** `null`
+  - **Example**
+  ```js
+  // https://yoursite.com/
+  const query = Unquery('?foo=bar&baz=42', {
+    foo: Unquery.string(),
+    baz: Unquery.number()
+  })
+
+  query.addLocationURL(() => {
+    // Callback of what you want to do when URL changes
+  })
+  // https://yoursite.com/?foo=bar&baz=42
+  ```
+
+- **clearLocationURL**
+  - **Description** Clear all query-string from URL without reload the page.
+  - **Type** `(calllback: () => void)`
+  - **Default** `null`
+  - **Example**
+  ```js
+  // https://yoursite.com/?foo=bar&baz=42
+  const query = Unquery('?foo=bar&baz=42', {
+    foo: Unquery.string(),
+    baz: Unquery.number()
+  })
+
+  query.clearLocationURL(() => {
+    // Callback of what you want to do when URL changes
+  })
+  // https://yoursite.com/
+  ```
+  or
+  ```js
+  import { clearLocationURL } from 'unquery'
+
+  clearLocationURL(() => {
+    // Callback of what you want to do when URL changes
+  })
   ```
