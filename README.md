@@ -146,7 +146,7 @@ Options to customize the schema that's gonna be generated.
  
  <br>
  
- - **skipUnknown**
+- **skipUnknown**
   - **Description** Skip `unknown` values to be parsed.
   - **Type** `boolean`
   - **Default** `true`
