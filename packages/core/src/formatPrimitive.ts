@@ -1,6 +1,7 @@
 import { UnqueryType, UnqueryTypeReturn } from './types'
 import { dateTokens } from './utils/date'
-import { unqueryOptions } from './unquery'
+import { unqueryOptions } from './unqueryOptions'
+import warn from './utils/warn'
 
 const parseOptional = (val: string) => `0${val || 0}`.slice(-2)
 
@@ -39,7 +40,7 @@ const primitiveCreators = {
   [UnqueryType.date]: (val: string, pattern?: string) => {
     const date = parseDate(val, pattern)
     if (isNaN(date.getTime())) {
-      console.warn(
+      warn(
         `Provided value "${date}" is not matching unquery pattern "${pattern}".`
       )
       return val
