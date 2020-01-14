@@ -31,7 +31,7 @@
   "main": "dist/index.js",
   "types": "dist/packages/core/index.d.ts",
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
+    "registry": "https://npm.pkg.github.com/loiacon"
   },
   "repository": {
     "type": "git",
