@@ -1,5 +1,4 @@
-import { stringify } from './stringify'
-import { addLocationURL, clearLocationURL } from './locationURL'
+import { StringifyOptions } from './stringify'
 
 export enum UnqueryType {
   string = 1,
@@ -8,7 +7,6 @@ export enum UnqueryType {
   array,
   date
 }
-
 export type UnqueryArrayTypes = 'comma' | 'bracket' | 'index' | 'none'
 
 export interface UnqueryDateOptions {
@@ -22,6 +20,8 @@ export interface UnqueryArrayOptions {
 export interface UnqueryOptions
   extends UnqueryArrayOptions,
     UnqueryDateOptions {
+  parsePattern?: string
+  encodePattern?: string
   skipNull?: boolean
   skipUnknown?: boolean
 }
@@ -29,9 +29,7 @@ export interface UnqueryOptions
 export type UnqueryObject<T extends object> = {
   [k in keyof T]?: T[k]
 } & {
-  stringify: typeof stringify
-  addLocationURL: typeof addLocationURL
-  clearLocationURL: typeof clearLocationURL
+  stringify: (options?: StringifyOptions) => string
 }
 
 export type UnqueryTypeReturn = {

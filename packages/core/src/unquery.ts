@@ -7,14 +7,13 @@ import {
   UnqueryType,
   UnqueryTypeReturn
 } from './types'
-import { unqueryOptions, setOptions } from './unqueryOptions'
-import { stringify } from './stringify'
-import { addLocationURL, clearLocationURL } from './locationURL'
+import { unqueryOptions, setOptions, provideOption } from './unqueryOptions'
+import { stringify, StringifyOptions } from './stringify'
 
 const unqueryMethods = {
-  stringify,
-  addLocationURL,
-  clearLocationURL
+  stringify(options?: StringifyOptions) {
+    return stringify(this, options)
+  }
 }
 
 const Unquery = <T extends object>(
@@ -37,17 +36,27 @@ const Unquery = <T extends object>(
 
   if (input) {
     input.split('&').forEach(param => {
-      let [key, value] = splitOnFirst(param, '=')
+      const [rawKey, rawValue] = splitOnFirst(param, '=')
 
-      key = parseKey({ key, arrayFormat })
-      value = decodeURIComponent(value) || null
+      const { key, isArray } = parseKey({ key: rawKey, arrayFormat })
+      const value = decodeURIComponent(rawValue) || null
+      const isUnknown = !(key in shape)
 
-      if (!(key in shape) && skipUnknown) {
+      if (isUnknown && skipUnknown) {
         return
       }
 
-      const config = (shape[key] || {}) as UnqueryTypeReturn
-      parser({ options, ...config, key, value, accumulator: ret })
+      const rawConfig = {
+        innerType: isArray && isUnknown ? Unquery.string() : null
+      }
+      const shapeConfig = shape[key] || {}
+      const config = {
+        ...rawConfig,
+        ...shapeConfig,
+        pattern: shapeConfig.pattern || provideOption('parsePattern', 'pattern')
+      } as UnqueryTypeReturn
+
+      parser({ options, ...config, key, value, queryObject: ret })
     })
   }
 
@@ -69,6 +78,7 @@ Unquery.bool = (): boolean => ({ type: UnqueryType.bool } as any)
 
 Unquery.date = (pattern?: string): Date =>
   ({ type: UnqueryType.date, pattern } as any)
+
 Unquery.array = <T extends string | number | boolean | Date>(
   innerType?: T
 ): T[] => {
