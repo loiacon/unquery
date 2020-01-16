@@ -18,6 +18,21 @@ describe('Unquery array parser', () => {
     })
   })
 
+  it('should parse array with Unquery.string as default inner value', () => {
+    const toParse = '?foo[0]=1&foo[1]=2'
+    const unquery = Unquery(
+      toParse,
+      {
+        foo: Unquery.array()
+      },
+      { arrayFormat: 'index' }
+    )
+
+    expect(unquery).toEqual({
+      foo: ['1', '2']
+    })
+  })
+
   it('should parse array with another values', () => {
     const toParse = '?someArray=1,2,3&someValue=foo&someBool=true&unknown=bar'
     const unquery = Unquery(
@@ -84,5 +99,17 @@ describe('Unquery array parser', () => {
     expect(unquery.stringify({ arrayFormat: 'index' })).toBe(
       'bracketArray[0]=1&bracketArray[1]=2'
     )
+  })
+
+  it('should parse unknown array', () => {
+    const toParse = '?nullArray[]=1&nullArray[]=2'
+
+    const unquery = Unquery(
+      toParse,
+      {},
+      { arrayFormat: 'bracket', skipUnknown: false }
+    )
+
+    expect(unquery).toEqual({ nullArray: ['1', '2'] })
   })
 })

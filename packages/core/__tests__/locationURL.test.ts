@@ -1,4 +1,4 @@
-import Unquery from '..'
+import Unquery, { clearLocationURL, addLocationURL } from '..'
 
 describe('addLocationURL', () => {
   const query = Unquery('?foo=bar', {
@@ -12,12 +12,9 @@ describe('addLocationURL', () => {
   it('should update and apply callback', () => {
     location.hash = 'value'
 
-    const fn = jest.fn()
     expect(location.search).toBe('')
 
-    query.addLocationURL(fn)
-
-    expect(fn).toHaveBeenCalledTimes(1)
+    addLocationURL(query)
 
     expect(location.search).toBe('?foo=bar')
     expect(location.href).toContain('?foo=bar#value')
@@ -27,7 +24,7 @@ describe('addLocationURL', () => {
     location.hash = ''
     expect(location.href.endsWith('?foo=bar')).toBe(true)
 
-    query.clearLocationURL()
+    clearLocationURL()
 
     expect(location.search).toBe('')
   })
