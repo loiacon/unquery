@@ -13,14 +13,24 @@ export interface ParseKeyOptions {
 }
 
 export function parseKey({ key, arrayFormat }: ParseKeyOptions) {
+  let isArray
+
   switch (arrayFormat) {
     case 'index':
-      return key.replace(/\[\d*\]$/, '')
-    case 'bracket':
-      return key.replace(/\[\]$/, '')
+    case 'bracket': {
+      const bracketRegExp = arrayFormat === 'index' ? /\[(\d*)\]$/ : /\[\]$/
+
+      isArray = bracketRegExp.test(key)
+      key = key.replace(bracketRegExp, '')
+      break
+    }
+    case 'comma':
+      isArray = typeof key === 'string' && key.split('').indexOf(',') > -1
+      break
     default:
-      return key
+      break
   }
+  return { key, isArray }
 }
 
 export interface ParserOptions {
@@ -28,7 +38,7 @@ export interface ParserOptions {
   type: UnqueryType
   key: string
   value: string
-  accumulator: object
+  queryObject: object
   innerType?: UnqueryTypeReturn
   pattern?: string
 }
@@ -38,47 +48,32 @@ export function parser({
   type = UnqueryType.string,
   key,
   value,
-  accumulator,
+  queryObject,
   innerType,
   pattern
 }: ParserOptions) {
-  let result
-
   if (!innerType) {
-    accumulator[key] = formatPrimitive(value, { type, pattern })
+    queryObject[key] = formatPrimitive(value, { type, pattern })
     return
   }
 
+  queryObject[key] && queryObject[key].push(formatPrimitive(value, innerType))
+
   switch (options.arrayFormat) {
     case 'index':
-      if (accumulator[key] === undefined) {
-        accumulator[key] = {}
-      }
-      accumulator[key][result[1]] = formatPrimitive(value, innerType)
-      break
     case 'bracket':
-      if (accumulator[key] === undefined) {
-        accumulator[key] = [formatPrimitive(value, innerType)]
-        return
+      if (queryObject[key] === undefined) {
+        queryObject[key] = [formatPrimitive(value, innerType)]
       }
-      accumulator[key] = [].concat(
-        accumulator[key],
-        formatPrimitive(value, innerType)
-      )
       break
     case 'comma':
-      accumulator[key] = value
+      queryObject[key] = value
         .split(',')
         .map(val => formatPrimitive(val, innerType))
       break
     default:
-      if (accumulator[key] === undefined) {
-        accumulator[key] = formatPrimitive(value, innerType)
-        return
+      if (queryObject[key] === undefined) {
+        queryObject[key] = formatPrimitive(value, innerType)
       }
-      accumulator[key] = [
-        ...accumulator[key],
-        formatPrimitive(value, innerType)
-      ]
   }
 }
