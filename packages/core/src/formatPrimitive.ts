@@ -1,6 +1,6 @@
 import { UnqueryType, UnqueryTypeReturn } from './types'
 import { dateTokens } from './utils/date'
-import { unqueryOptions } from './unqueryOptions'
+import { provideOption } from './unqueryOptions'
 import warn from './utils/warn'
 
 const parseOptional = (val: string) => `0${val || 0}`.slice(-2)
@@ -56,7 +56,7 @@ function formatPrimitive(
   }
 ) {
   if (type === UnqueryType.date) {
-    pattern = pattern || unqueryOptions.pattern
+    pattern = pattern || provideOption('parsePattern', 'pattern')
     return primitiveCreators[type](value, pattern)
   }
   return (primitiveCreators[type] && primitiveCreators[type](value)) || value
