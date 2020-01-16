@@ -1,6 +1,7 @@
 import { UnqueryArrayOptions, UnqueryDateOptions } from './types'
-import { unqueryOptions } from './unqueryOptions'
+import { provideOption } from './unqueryOptions'
 import { dateTokens } from './utils/date'
+import { extend } from './utils'
 
 const parseZero = (value: number) => `0${value}`.slice(-2)
 
@@ -72,20 +73,20 @@ const arrayFormatter = (
 
 export type StringifyOptions = UnqueryArrayOptions & UnqueryDateOptions
 const stringifyOptions = (): StringifyOptions => ({
-  arrayFormat: unqueryOptions.arrayFormat,
-  pattern: unqueryOptions.pattern
+  arrayFormat: provideOption('arrayFormat'),
+  pattern: provideOption('encodePattern', 'pattern')
 })
 
-export function stringify(options: StringifyOptions) {
-  const { arrayFormat, pattern } = {
-    ...stringifyOptions(),
-    ...(options || {})
-  }
-  const keys = Object.keys(this)
+export function stringify(
+  queryObject: { [k: string]: unknown },
+  options: StringifyOptions
+) {
+  const { arrayFormat, pattern } = extend(stringifyOptions(), options)
+  const keys = Object.keys(queryObject)
 
   return keys
     .map(key => {
-      const value = this[key]
+      const value = queryObject[key]
       if (!value) {
         return ''
       }
