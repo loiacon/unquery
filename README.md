@@ -67,8 +67,8 @@ const unquery = Unquery('?foo=str&bar=123&baz=1,2,3&date=2020-01-01&unnecessary=
   date: Unquery.date('YYYY-MM-DD')
 }, { arrayFormat: "comma" })
 
-const parsed = unquery.stringify({ arrayFormat: 'bracket' })
-console.log(parsed)
+const stringified = unquery.stringify({ arrayFormat: 'bracket' })
+console.log(stringified)
 ```
 ```js
 "?foo=str&bar=123&baz[]=1&baz[]=2&baz[]=3&date=2020-01-01"
@@ -192,50 +192,85 @@ const query = Unquery(...) // query is an Unquery Object
   })
   // { startDate: [object Date], viewId: 4 }
 
-  const parsedQuery = query.stringify({ pattern: 'DD/MM/YYYY' })
+  const stringified = query.stringify({ pattern: 'DD/MM/YYYY' })
   // "startDate=01/01/2020&viewId=4"
   ```
 
+#### Global API
 - **addLocationURL**
   - **Description** Add query-string to URL without reload the page. Under the hood, this call `stringify` method, so, you can pass all StringifyOptions in second parameter.
-  - **Type** `(callback: () => void, options: StringifyOptions)`
+  - **Type** `(queryObject: UnqueryObject) => void`
   - **Default** `null`
   - **Example**
   ```js
+  import { addLocationURL } from 'unquery'
+
   // https://yoursite.com/
   const query = Unquery('?foo=bar&baz=42', {
     foo: Unquery.string(),
     baz: Unquery.number()
   })
 
-  query.addLocationURL(() => {
-    // Callback of what you want to do when URL changes
-  })
+  addLocationURL()
   // https://yoursite.com/?foo=bar&baz=42
   ```
-
 - **clearLocationURL**
   - **Description** Clear all query-string from URL without reload the page.
-  - **Type** `(calllback: () => void)`
+  - **Type** `() => void`
   - **Default** `null`
   - **Example**
-  ```js
-  // https://yoursite.com/?foo=bar&baz=42
-  const query = Unquery('?foo=bar&baz=42', {
-    foo: Unquery.string(),
-    baz: Unquery.number()
-  })
-
-  query.clearLocationURL(() => {
-    // Callback of what you want to do when URL changes
-  })
-  // https://yoursite.com/
-  ```
-  or
   ```js
   import { clearLocationURL } from 'unquery'
 
-  clearLocationURL(() => {
-    // Callback of what you want to do when URL changes
+  // https://yoursite.com/?foo=bar&baz=42
+  const query = Unquery('?foo=bar&baz=42', {
+    foo: Unquery.string(),
+    baz: Unquery.number()
   })
+
+  clearLocationURL()
+  // https://yoursite.com/
+  ```
+- **stringify**
+  - **Description** Stringify an object into a query string.
+  - **Type** `(queryObject: UnqueryObject, options: StringifyOptions) => string`
+  - **Default**
+  ```js
+  {
+    // You can set your unqueryOptions by calling Unquery.setOptions(options)
+    arrayFormat: unqueryOptions.arrayFormat // default: 'none',
+    pattern: unqueryOptions.pattern // default: 'YYYY-MM-DD'
+  }
+  ```
+  - **Examples**
+  ```js
+  import { stringify } from 'unquery'
+
+  const stringified = stringify({ startDate: '2020-01-01', viewId: 4 })
+  // "startDate=2020-01-01&viewId=4"
+  ```
+
+- **setOptions**
+  - **Description** Set default options to use in your entire app.
+  - **Type** `(options: UnqueryOptions) => UnqueryOptions`
+  - **Examples**
+  ```js
+  import Unquery, { setOptions } from 'unquery'
+
+  setOptions({
+    arrayFormat: 'comma',
+    pattern: 'YYYY-MM-DD',
+    parsePattern: null,
+    encodePattern: 'DD/MM/YYYY',
+    skipNull: true,
+    skipUnknown: false
+  })
+
+  const unquery = Unquery('?date=2020-02-01&foo=1,2,3', {
+    date: Unquery.date()
+  })
+  // { date: [object Date], foo: ['1','2','3'] }
+
+  const stringified = unquery.stringify({ arrayFormat: 'index' })
+  // 'data=01/02/2020&foo[0]=1&foo[1]=2&foo[2]=3
   ```
