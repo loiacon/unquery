@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+export const isString = (val: unknown): val is string => typeof val === 'string'
+
 export const extend = <T extends object, U extends object>(
   a: T,
   b: U
