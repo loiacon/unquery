@@ -17,11 +17,12 @@ export function parseKey({ key, arrayFormat }: ParseKeyOptions) {
 
   switch (arrayFormat) {
     case 'index':
+      isArray = /\[(\d*)\]$/.test(key)
+      key = key.replace(/\[(\d*)\]$/, '')
+      break
     case 'bracket': {
-      const bracketRegExp = arrayFormat === 'index' ? /\[(\d*)\]$/ : /\[\]$/
-
-      isArray = bracketRegExp.test(key)
-      key = key.replace(bracketRegExp, '')
+      isArray = /\[\]$/.test(key)
+      key = key.replace(/\[\]$/, '')
       break
     }
     case 'comma':
