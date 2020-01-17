@@ -1,5 +1,8 @@
 # Unquery 🍫
 
+[![Version npm](http://img.shields.io/npm/v/unquery.svg?style=flat-square)](https://www.npmjs.com/package/unquery)
+[![Dependencies](https://img.shields.io/david/loiacon/unquery.svg?style=flat-square)](https://david-dm.org/loiacon/unquery)
+
 Build and control query-strings with confidence.
 
 It helps you to parse and stringify `query-strings` in a predictable way.
