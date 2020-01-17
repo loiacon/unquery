@@ -7,7 +7,7 @@ import {
   UnqueryType,
   UnqueryTypeReturn
 } from './types'
-import { unqueryOptions, setOptions, provideOption } from './unqueryOptions'
+import { unqueryOptions, provideOption } from './unqueryOptions'
 import { stringify, StringifyOptions } from './stringify'
 
 const unqueryMethods = {
@@ -25,7 +25,7 @@ const Unquery = <T extends object>(
     ...unqueryOptions,
     ...((options as any) || {})
   }
-  const { skipNull = false, skipUnknown = true, arrayFormat = 'none' } = options
+  const { skipNull, skipUnknown, arrayFormat } = options
   const ret: UnqueryObject<T> = Object.create(unqueryMethods)
 
   if (typeof input !== 'string') {
@@ -60,16 +60,14 @@ const Unquery = <T extends object>(
     })
   }
 
-  Object.keys(shape).forEach(key => {
+  for (const key in shape) {
     if (!skipNull && !ret[key]) {
       ret[key] = null
     }
-  })
+  }
 
   return ret
 }
-
-Unquery.setOptions = setOptions
 
 // Unquery primitives
 Unquery.string = (): string => ({ type: UnqueryType.string } as any)
