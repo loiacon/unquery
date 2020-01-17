@@ -179,7 +179,7 @@ const query = Unquery(...) // query is an Unquery Object
   - **Default**
   ```js
   {
-    // You can set your unqueryOptions by calling Unquery.setOptions(options)
+    // You can set your unqueryOptions by calling setOptions(options)
     arrayFormat: unqueryOptions.arrayFormat // default: 'none',
     pattern: unqueryOptions.pattern // default: 'YYYY-MM-DD'
   }
@@ -198,8 +198,8 @@ const query = Unquery(...) // query is an Unquery Object
 
 #### Global API
 - **addLocationURL**
-  - **Description** Add query-string to URL without reload the page. Under the hood, this call `stringify` method, so, you can pass all StringifyOptions in second parameter.
-  - **Type** `(queryObject: UnqueryObject) => void`
+  - **Description** Add query-string to URL. This keeps all current search.
+  - **Type** `(query: object | string, options: StringifyOptions) => void`
   - **Default** `null`
   - **Example**
   ```js
@@ -211,8 +211,32 @@ const query = Unquery(...) // query is an Unquery Object
     baz: Unquery.number()
   })
 
-  addLocationURL()
-  // https://yoursite.com/?foo=bar&baz=42
+  addLocationURL(query)
+  // https://yoursite.com?foo=bar&baz=42
+
+  addLocationURL('date=2020-09-01')
+  // https://yoursite.com?foo=bar&baz=42&date=2020-09-01
+  ```
+
+- **replaceLocationURL**
+  - **Description** Replace all URL search by the query-string.
+  - **Type** `(query: object | string, options: StringifyOptions) => void`
+  - **Default** `null`
+  - **Example**
+  ```js
+  import { replaceLocationURL } from 'unquery'
+
+  // https://yoursite.com/
+  const query = Unquery('?foo=bar&baz=42', {
+    foo: Unquery.string(),
+    baz: Unquery.number()
+  })
+
+  replaceLocationURL(query)
+  // https://yoursite.com?foo=bar&baz=42
+
+  replaceLocationURL('date=2020-09-01')
+  // https://yoursite.com?date=2020-09-01
   ```
 - **clearLocationURL**
   - **Description** Clear all query-string from URL without reload the page.
@@ -237,7 +261,7 @@ const query = Unquery(...) // query is an Unquery Object
   - **Default**
   ```js
   {
-    // You can set your unqueryOptions by calling Unquery.setOptions(options)
+    // You can set your unqueryOptions by calling setOptions(options)
     arrayFormat: unqueryOptions.arrayFormat // default: 'none',
     pattern: unqueryOptions.pattern // default: 'YYYY-MM-DD'
   }
