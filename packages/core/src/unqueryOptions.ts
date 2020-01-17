@@ -5,8 +5,6 @@ import { extend } from './utils'
  * Initial unqueryOptions, this can be changed by calling setOptions
  */
 export const unqueryOptions: UnqueryOptions = {
-  parsePattern: null,
-  encodePattern: null,
   pattern: 'YYYY-MM-DD',
   arrayFormat: 'none',
   skipNull: false,
@@ -20,11 +18,11 @@ export const setOptions = (options: UnqueryOptions) => {
 }
 
 export const provideOption = <T extends keyof UnqueryOptions>(
-  ...args: T[]
+  ...optionsKey: T[]
 ): UnqueryOptions[T] => {
-  for (let i = 0; i < args.length; i++) {
-    const option = unqueryOptions[args[i]]
-    if (option !== null) {
+  for (const key of optionsKey) {
+    const option = unqueryOptions[key]
+    if (option != null) {
       return option
     }
   }
