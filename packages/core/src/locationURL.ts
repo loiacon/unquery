@@ -1,25 +1,34 @@
 import { StringifyOptions, stringify } from './stringify'
-import warn from './utils/warn'
 
-export function addLocationURL<T extends object>(
-  queryObject: { [k: string]: unknown },
+type LocationQuery<T> = { [k in keyof T]: T[k] } | string
+
+const updateHistory = (url = '') =>
+  history.replaceState(null, null, `${location.pathname}${url}${location.hash}`)
+
+const requery = <T extends object>(
+  query: LocationQuery<T>,
   options?: StringifyOptions
-) {
-  if (typeof window === 'undefined') {
-    warn(`To use "addLocationURL" you need to be in client-side`)
-    return
-  }
-  history.replaceState(
-    null,
-    null,
-    `?${stringify(queryObject, options)}${location.hash}`
-  )
+) =>
+  typeof query === 'string'
+    ? query.trim().replace(/^[?#&]/, '')
+    : stringify(query, options)
+
+/** Replace all URL search */
+export const replaceLocationURL = <T extends object>(
+  query: LocationQuery<T>,
+  options?: StringifyOptions
+) => {
+  updateHistory(`?${requery(query, options)}`)
 }
 
-export function clearLocationURL() {
-  if (typeof window === 'undefined') {
-    warn(`To use "clearLocationURL" you need to be in client-side`)
-    return
-  }
-  history.replaceState(null, null, `${location.pathname}${location.hash}`)
+/** Add query-string without removing other search */
+export const addLocationURL = <T extends object>(
+  query: LocationQuery<T>,
+  options?: StringifyOptions
+) => {
+  const token = location.search ? '&' : '?'
+  updateHistory(`${location.search}${token}${requery(query, options)}`)
 }
+
+/** Clear current URL search */
+export const clearLocationURL = () => updateHistory()
