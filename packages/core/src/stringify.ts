@@ -98,6 +98,6 @@ export function stringify(
       }
       return `${key}=${value}`
     })
-    .filter(x => x.length > 0)
+    .filter(Boolean)
     .join('&')
 }
