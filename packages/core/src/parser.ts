@@ -6,6 +6,7 @@ import {
   UnqueryArrayTypes
 } from './types'
 import formatPrimitive from './formatPrimitive'
+import { isString } from './utils'
 
 export interface ParseKeyOptions {
   key: string
@@ -26,7 +27,7 @@ export function parseKey({ key, arrayFormat }: ParseKeyOptions) {
       break
     }
     case 'comma':
-      isArray = typeof key === 'string' && key.split('').indexOf(',') > -1
+      isArray = isString(key) && key.indexOf(',') > -1
       break
     default:
       break

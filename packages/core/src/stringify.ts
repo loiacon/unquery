@@ -1,7 +1,7 @@
 import { UnqueryArrayOptions, UnqueryDateOptions } from './types'
 import { provideOption } from './unqueryOptions'
 import { dateTokens } from './utils/date'
-import { extend } from './utils'
+import { extend, isString } from './utils'
 
 const parseZero = (value: number) => `0${value}`.slice(-2)
 
@@ -78,15 +78,18 @@ const stringifyOptions = (): StringifyOptions => ({
 })
 
 export function stringify(
-  queryObject: { [k: string]: unknown },
+  query: { [k: string]: unknown } | string,
   options: StringifyOptions
 ) {
+  if (isString(query)) {
+    return query.trim().replace(/^[?#&]/, '')
+  }
   const { arrayFormat, pattern } = extend(stringifyOptions(), options)
-  const keys = Object.keys(queryObject)
+  const keys = Object.keys(query)
 
   return keys
     .map(key => {
-      const value = queryObject[key]
+      const value = query[key]
       if (!value) {
         return ''
       }

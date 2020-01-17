@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { splitOnFirst } from './utils'
+import { splitOnFirst, isString } from './utils'
 import { parser, parseKey } from './parser'
 import {
   UnqueryObject,
@@ -28,7 +28,7 @@ const Unquery = <T extends object>(
   const { skipNull, skipUnknown, arrayFormat } = options
   const ret: UnqueryObject<T> = Object.create(unqueryMethods)
 
-  if (typeof input !== 'string') {
+  if (!isString(input)) {
     return ret
   }
 
