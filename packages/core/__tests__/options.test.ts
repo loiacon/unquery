@@ -1,8 +1,8 @@
-import Unquery from '..'
+import Unquery, { setOptions } from '..'
 
 describe('Unquery global options', () => {
   it('should respect global arrayFormat option', () => {
-    Unquery.setOptions({ arrayFormat: 'comma' })
+    setOptions({ arrayFormat: 'comma' })
 
     const toParse = 'arr=1,2,3'
     const unquery = Unquery(toParse, {
@@ -13,7 +13,7 @@ describe('Unquery global options', () => {
   })
 
   it('should respect local arrayFormat option', () => {
-    Unquery.setOptions({ arrayFormat: 'none' })
+    setOptions({ arrayFormat: 'none' })
 
     const toParse = 'arr=1,2,3'
     const unquery = Unquery(

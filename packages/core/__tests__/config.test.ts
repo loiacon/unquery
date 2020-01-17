@@ -54,7 +54,7 @@ describe('Unquery config', () => {
 
   it('should get new global config', () => {
     const toParse = '?foo[0]=bar&foo[1]=123&unknown=baz'
-    Unquery.setOptions({
+    setOptions({
       arrayFormat: 'index',
       skipUnknown: false
     })
