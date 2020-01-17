@@ -5,14 +5,20 @@ import warn from './utils/warn'
 
 const parseOptional = (val: string) => `0${val || 0}`.slice(-2)
 
+type DateParser = {
+  day: string
+  month: string
+  year: string
+  hours?: string
+  minutes?: string
+  seconds?: string
+}
+
 const parseDate = (val: string, pattern: string) => {
-  let date = {
+  const date: DateParser = {
     day: '',
     month: '',
-    year: '',
-    hours: '',
-    minutes: '',
-    seconds: ''
+    year: ''
   }
   for (let i = 0; i < pattern.length; i++) {
     const token = dateTokens[pattern[i]]
@@ -21,12 +27,9 @@ const parseDate = (val: string, pattern: string) => {
     }
   }
 
-  date = {
-    ...date,
-    hours: parseOptional(date.hours),
-    minutes: parseOptional(date.minutes),
-    seconds: parseOptional(date.seconds)
-  }
+  date.hours = parseOptional(date.hours)
+  date.minutes = parseOptional(date.minutes)
+  date.seconds = parseOptional(date.seconds)
 
   return new Date(
     `${date.year}-${date.month}-${date.day}T${date.hours}:${date.minutes}:${date.seconds}.000Z`
@@ -40,9 +43,7 @@ const primitiveCreators = {
   [UnqueryType.date]: (val: string, pattern?: string) => {
     const date = parseDate(val, pattern)
     if (isNaN(date.getTime())) {
-      warn(
-        `Provided value "${date}" is not matching unquery pattern "${pattern}".`
-      )
+      warn(`Provided value "${date}" is not matching pattern "${pattern}".`)
       return val
     }
     return date
