@@ -1,4 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Unquery from '..'
+import warn from '../src/utils/warn'
+
+jest.mock('../src/utils/warn')
 
 describe('Unquery', () => {
   it('should parse primitives', () => {
@@ -38,7 +42,7 @@ describe('Unquery', () => {
     )
   })
 
-  it('should stringify multiple values', () => {
+  it('should stringify multiple warnMocks', () => {
     const toParse =
       '?email=foo@mail.com&userId=4&arr=foo,bar,baz&open=true&startDate=2020-01-01&unknown=bar'
     const unquery = Unquery(
@@ -65,5 +69,40 @@ describe('Unquery', () => {
     expect(unquery.stringify({ arrayFormat: 'comma' })).toBe(
       'email=foo@mail.com&userId=4&arr=foo,bar,baz&open=true&startDate=2020-01-01'
     )
+  })
+
+  it('should ignore date with unknown format', () => {
+    const toParse = 'foo=10-02-1996'
+    const query = Unquery(toParse, {
+      foo: Unquery.date('YYYY-MM-DD')
+    })
+
+    expect(query).toEqual({ foo: '10-02-1996' })
+    expect(warn).toHaveBeenCalledTimes(1)
+    expect(warn).toHaveBeenCalledWith(
+      'Provided value "10-02-1996" is not matching pattern "YYYY-MM-DD".'
+    )
+  })
+
+  it('should ignore when input is not a string', () => {
+    const toParse = 2 as any
+    const query = Unquery(toParse, {})
+
+    expect(query).toEqual({})
+  })
+
+  it('should show value when primitive type is incorrect', () => {
+    const toParse = 'a=1&b=2&c=1&c=2'
+    const query = Unquery(
+      toParse,
+      {
+        a: 42,
+        b: Unquery.number(),
+        c: Unquery.array(42)
+      },
+      { arrayFormat: 'none' }
+    )
+
+    expect(query).toEqual({ a: '1', b: 2, c: ['1', '2'] })
   })
 })
