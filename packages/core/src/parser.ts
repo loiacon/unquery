@@ -46,7 +46,7 @@ export interface ParserOptions {
 }
 
 export function parser({
-  options = unqueryOptions,
+  options: customOptions,
   type = UnqueryType.string,
   key,
   value,
@@ -54,6 +54,7 @@ export function parser({
   innerType,
   pattern
 }: ParserOptions) {
+  const options = { ...unqueryOptions, ...customOptions }
   if (!innerType) {
     queryObject[key] = formatPrimitive(value, { type, pattern })
     return
@@ -62,12 +63,6 @@ export function parser({
   queryObject[key] && queryObject[key].push(formatPrimitive(value, innerType))
 
   switch (options.arrayFormat) {
-    case 'index':
-    case 'bracket':
-      if (queryObject[key] === undefined) {
-        queryObject[key] = [formatPrimitive(value, innerType)]
-      }
-      break
     case 'comma':
       queryObject[key] = value
         .split(',')
@@ -75,7 +70,7 @@ export function parser({
       break
     default:
       if (queryObject[key] === undefined) {
-        queryObject[key] = formatPrimitive(value, innerType)
+        queryObject[key] = [formatPrimitive(value, innerType)]
       }
   }
 }
