@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { splitOnFirst, isString } from './utils'
+import { splitOnFirst, isString, safeDecodeURI } from './utils'
 import { parser, parseKey } from './parser'
 import {
   UnqueryObject,
@@ -38,8 +38,11 @@ const Unquery = <T extends object>(
     input.split('&').forEach(param => {
       const [rawKey, rawValue] = splitOnFirst(param, '=')
 
-      const { key, isArray } = parseKey({ key: rawKey, arrayFormat })
-      const value = decodeURIComponent(rawValue) || null
+      const { key, isArray } = parseKey({
+        key: safeDecodeURI(rawKey),
+        arrayFormat
+      })
+      const value = safeDecodeURI(rawValue)
       const isUnknown = !(key in shape)
 
       if (isUnknown && skipUnknown) {
