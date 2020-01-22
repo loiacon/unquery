@@ -79,7 +79,7 @@ const stringifyOptions = (): StringifyOptions => ({
 
 export function stringify(
   query: { [k: string]: unknown } | string,
-  options: StringifyOptions
+  options?: StringifyOptions
 ) {
   if (isString(query)) {
     return query.trim().replace(/^[?#&]/, '')
