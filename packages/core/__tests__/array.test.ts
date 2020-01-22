@@ -112,4 +112,17 @@ describe('Unquery array parser', () => {
 
     expect(unquery).toEqual({ nullArray: ['1', '2'] })
   })
+
+  it('should parse arrayFormat none', () => {
+    const toParse = 'foo=1&foo=2&foo=3'
+    const unquery = Unquery(
+      toParse,
+      {
+        foo: Unquery.array(Unquery.number())
+      },
+      { arrayFormat: 'none' }
+    )
+
+    expect(unquery).toEqual({ foo: [1, 2, 3] })
+  })
 })
