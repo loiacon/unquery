@@ -27,3 +27,11 @@ export const splitOnFirst = (string: string, separator: string) => {
     string.slice(separatorIndex + separator.length)
   ]
 }
+
+export const safeDecodeURI = (value: string) => {
+  try {
+    return decodeURIComponent(value)
+  } catch {
+    return value
+  }
+}
