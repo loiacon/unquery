@@ -2,6 +2,8 @@
 
 [![Version npm](http://img.shields.io/npm/v/unquery.svg?style=flat-square)](https://www.npmjs.com/package/unquery)
 [![Dependencies](https://img.shields.io/david/loiacon/unquery.svg?style=flat-square)](https://david-dm.org/loiacon/unquery)
+[![Build Status](https://img.shields.io/travis/loiacon/unquery?style=flat-square)](https://travis-ci.org/loiacon/unquery)
+[![codecov](https://img.shields.io/codecov/c/github/loiacon/unquery?style=flat-square)](https://codecov.io/gh/loiacon/unquery)
 
 Build and control query-strings with confidence.
 
