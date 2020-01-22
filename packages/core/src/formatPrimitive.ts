@@ -23,7 +23,7 @@ const parseDate = (val: string, pattern: string) => {
   for (let i = 0; i < pattern.length; i++) {
     const token = dateTokens[pattern[i]]
     if (token) {
-      date[token[1]] += val[i] || ''
+      date[token[1]] += val[i]
     }
   }
 
@@ -43,19 +43,15 @@ const primitiveCreators = {
   [UnqueryType.date]: (val: string, pattern?: string) => {
     const date = parseDate(val, pattern)
     if (isNaN(date.getTime())) {
-      warn(`Provided value "${date}" is not matching pattern "${pattern}".`)
+      warn(`Provided value "${val}" is not matching pattern "${pattern}".`)
       return val
     }
     return date
   }
 }
 
-function formatPrimitive(
-  value: string,
-  { type, pattern }: UnqueryTypeReturn = {
-    type: UnqueryType.string
-  }
-) {
+function formatPrimitive(value: string, { type, pattern }: UnqueryTypeReturn) {
+  type = type || UnqueryType.string
   if (type === UnqueryType.date) {
     pattern = pattern || provideOption('parsePattern', 'pattern')
     return primitiveCreators[type](value, pattern)
