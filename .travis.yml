@@ -4,10 +4,6 @@ install:
   - yarn install
 node_js:
   - 10
-  - 9
-  - 8
-  - 7
-  - 6
 script:
   - yarn test
   - yarn test --coverage
