@@ -1,31 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const isString = (val: unknown): val is string => typeof val === 'string'
+export const isObject = (val: unknown): val is object =>
+  val && typeof val === 'object' && !Array.isArray(val)
 
-export const extend = <T extends object, U extends object>(
-  a: T,
-  b: U
-): T & U => {
-  for (const key in b) {
-    ;(a as any)[key] = b[key]
-  }
-  return a as any
-}
-
-export const splitOnFirst = (string: string, separator: string) => {
-  if (separator === '') {
-    return []
-  }
-
-  const separatorIndex = string.indexOf(separator)
+export const splitQuery = (string: string) => {
+  const separatorIndex = string.indexOf('=')
 
   if (separatorIndex === -1) {
     return []
   }
 
-  return [
-    string.slice(0, separatorIndex),
-    string.slice(separatorIndex + separator.length)
-  ]
+  return [string.slice(0, separatorIndex), string.slice(separatorIndex + 1)]
 }
 
 export const safeDecodeURI = (value: string) => {
