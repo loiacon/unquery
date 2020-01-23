@@ -54,23 +54,21 @@ export function parser({
   innerType,
   pattern
 }: ParserOptions) {
-  const options = { ...unqueryOptions, ...customOptions }
   if (!innerType) {
     queryObject[key] = formatPrimitive(value, { type, pattern })
-    return
-  }
+  } else if (queryObject[key]) {
+    queryObject[key].push(formatPrimitive(value, innerType))
+  } else {
+    const options = { ...unqueryOptions, ...customOptions }
 
-  queryObject[key] && queryObject[key].push(formatPrimitive(value, innerType))
-
-  switch (options.arrayFormat) {
-    case 'comma':
-      queryObject[key] = value
-        .split(',')
-        .map(val => formatPrimitive(val, innerType))
-      break
-    default:
-      if (queryObject[key] === undefined) {
+    switch (options.arrayFormat) {
+      case 'comma':
+        queryObject[key] = value
+          .split(',')
+          .map(val => formatPrimitive(val, innerType))
+        break
+      default:
         queryObject[key] = [formatPrimitive(value, innerType)]
-      }
+    }
   }
 }

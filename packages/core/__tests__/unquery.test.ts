@@ -91,7 +91,7 @@ describe('Unquery', () => {
     expect(query).toEqual({})
   })
 
-  it('should show value when primitive type is incorrect', () => {
+  it('should ignore parameter when primitive type is incorrect', () => {
     const toParse = 'a=1&b=2&c=1&c=2'
     const query = Unquery(
       toParse,
@@ -104,5 +104,18 @@ describe('Unquery', () => {
     )
 
     expect(query).toEqual({ a: '1', b: 2, c: ['1', '2'] })
+  })
+
+  it('should work with falsy values', () => {
+    const toParse = 'a=0&b=0&c=&d&e&unknown=1'
+    const query = Unquery(toParse, {
+      a: Unquery.number(),
+      b: Unquery.string(),
+      c: Unquery.string(),
+      d: Unquery.string(),
+      e: Unquery.array()
+    })
+
+    expect(query).toEqual({ a: 0, b: '0', c: '', d: null, e: [null] })
   })
 })

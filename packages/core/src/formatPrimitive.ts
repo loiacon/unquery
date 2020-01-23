@@ -38,7 +38,7 @@ const parseDate = (val: string, pattern: string) => {
 
 const primitiveCreators = {
   [UnqueryType.string]: (val: string) => String(val),
-  [UnqueryType.number]: (val: string) => Number(val),
+  [UnqueryType.number]: (val: string) => (val !== '' ? +val : null),
   [UnqueryType.bool]: (val: string) => Boolean(val),
   [UnqueryType.date]: (val: string, pattern?: string) => {
     const date = parseDate(val, pattern)
@@ -56,7 +56,10 @@ function formatPrimitive(value: string, { type, pattern }: UnqueryTypeReturn) {
     pattern = pattern || provideOption('parsePattern', 'pattern')
     return primitiveCreators[type](value, pattern)
   }
-  return (primitiveCreators[type] && primitiveCreators[type](value)) || value
+  if (primitiveCreators[type] && value != null) {
+    return primitiveCreators[type](value)
+  }
+  return value
 }
 
 export default formatPrimitive

@@ -125,4 +125,19 @@ describe('Unquery array parser', () => {
 
     expect(unquery).toEqual({ foo: [1, 2, 3] })
   })
+
+  it('should array work with falsy values', () => {
+    const toParse = 'foo&foo=true&bar=&bar=0&baz=&baz=foo&baz'
+    const query = Unquery(toParse, {
+      foo: Unquery.array(Unquery.bool()),
+      bar: Unquery.array(Unquery.number()),
+      baz: Unquery.array(Unquery.string())
+    })
+
+    expect(query).toEqual({
+      foo: [null, true],
+      bar: [null, 0],
+      baz: ['', 'foo', null]
+    })
+  })
 })
