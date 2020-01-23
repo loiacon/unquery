@@ -1,10 +1,11 @@
 language: node_js
 sudo: false
 install:
-  - yarn install
+  - npm install
 node_js:
+  - 12
   - 10
+  - 8
 script:
-  - yarn test
-  - yarn test --coverage
+  - npm test --coverage
   - codecov -f coverage/*.json
