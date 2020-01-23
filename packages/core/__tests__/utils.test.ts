@@ -1,33 +1,17 @@
-import { extend, splitOnFirst, safeDecodeURI } from '../src/utils'
+import { splitQuery, safeDecodeURI } from '../src/utils'
 import warn from '../src/utils/warn'
 
 describe('test utils', () => {
-  it('should extend', () => {
-    const a = { foo: 1 }
-    const b = { bar: 2 }
-
-    extend(a, b)
-
-    expect(a).toEqual({ foo: 1, bar: 2 })
-  })
-
   it('should split on first', () => {
     const foo = 'a=b=c'
-    const splitted = splitOnFirst(foo, '=')
+    const splitted = splitQuery(foo)
 
     expect(splitted).toEqual(['a', 'b=c'])
   })
 
-  it('should return empty array when separator is empty', () => {
-    const foo = 'a=b=c'
-    const splitted = splitOnFirst(foo, '')
-
-    expect(splitted).toEqual([])
-  })
-
   it('should return empty array when separator is not found', () => {
-    const foo = 'a=b=c'
-    const splitted = splitOnFirst(foo, '.')
+    const foo = 'a.b.c'
+    const splitted = splitQuery(foo)
 
     expect(splitted).toEqual([])
   })
