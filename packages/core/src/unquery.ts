@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { splitOnFirst, isString, safeDecodeURI } from './utils'
+import { splitQuery, isString, safeDecodeURI } from './utils'
 import { parser, parseKey } from './parser'
 import {
   UnqueryObject,
@@ -36,35 +36,37 @@ const Unquery = <T extends object>(
 
   if (input) {
     input.split('&').forEach(param => {
-      const [rawKey, rawValue] = splitOnFirst(param, '=')
+      const [rawKey = param, rawValue] = splitQuery(param)
 
       const { key, isArray } = parseKey({
         key: safeDecodeURI(rawKey),
         arrayFormat
       })
-      const value = safeDecodeURI(rawValue)
+      const value = rawValue != null ? safeDecodeURI(rawValue) : null
       const isUnknown = !(key in shape)
 
       if (isUnknown && skipUnknown) {
         return
       }
 
-      const rawConfig = {
-        innerType: isArray && isUnknown ? Unquery.string() : null
-      }
       const shapeConfig = shape[key] || {}
       const config = {
-        ...rawConfig,
+        // Set default innerType when
+        // matched isArray and isUnknown value
+        innerType: isArray && isUnknown && Unquery.string(),
         ...shapeConfig,
         pattern: shapeConfig.pattern || provideOption('parsePattern', 'pattern')
       } as UnqueryTypeReturn
 
+      // Parsed value will be stored in unquery ret
       parser({ options, ...config, key, value, queryObject: ret })
     })
   }
 
   for (const key in shape) {
-    if (!skipNull && !ret[key]) {
+    // If value is null and exists in shape
+    // but is not in current input, set value to null
+    if (!skipNull && ret[key] == null) {
       ret[key] = null
     }
   }
@@ -82,12 +84,11 @@ Unquery.date = (pattern?: string): Date =>
 
 Unquery.array = <T extends string | number | boolean | Date>(
   innerType?: T
-): T[] => {
-  return {
+): T[] =>
+  ({
     type: UnqueryType.array,
     innerType: innerType || UnqueryType.string
-  } as any
-}
+  } as any)
 
 // Export
 export default Unquery
