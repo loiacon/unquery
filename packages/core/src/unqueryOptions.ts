@@ -1,10 +1,13 @@
 import { UnqueryOptions } from './types'
-import { extend } from './utils'
+import { isObject } from './utils'
+import warn from './utils/warn'
 
 /**
- * Initial unqueryOptions, this can be changed by calling setOptions
+ * Initial unqueryOptions, this can be changed by calling `setOptions`
  */
 export const unqueryOptions: UnqueryOptions = {
+  parsePattern: null,
+  encodePattern: null,
   pattern: 'YYYY-MM-DD',
   arrayFormat: 'none',
   skipNull: false,
@@ -13,7 +16,13 @@ export const unqueryOptions: UnqueryOptions = {
 
 /** Change global unqueryOptions */
 export const setOptions = (options: UnqueryOptions) => {
-  extend(unqueryOptions, options)
+  if (isObject(options)) {
+    for (const key in options) {
+      key in unqueryOptions && (unqueryOptions[key] = options[key])
+    }
+  } else {
+    warn(`Updated options "${options}" was not an object`)
+  }
   return unqueryOptions
 }
 

@@ -1,5 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Unquery, { setOptions } from '..'
 import { unqueryOptions } from '../src/unqueryOptions'
+import warn from '../src/utils/warn'
+
+jest.mock('../src/utils/warn')
 
 describe('Unquery global options', () => {
   it('should respect global arrayFormat option', () => {
@@ -44,5 +48,11 @@ describe('Unquery global options', () => {
 
     expect(query).toEqual({ foo: [1, 2] })
     expect(unqueryOptions.arrayFormat).toBe('none')
+  })
+
+  it('should call warn when option is not valid', () => {
+    setOptions('invalid option' as any)
+
+    expect(warn).toHaveBeenCalledTimes(1)
   })
 })
