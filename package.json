@@ -2,6 +2,8 @@
   "name": "unquery",
   "license": "MIT",
   "version": "0.3.2",
+  "main": "dist/unquery.cjs.js",
+  "module": "dist/unquery.esm.js",
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
@@ -31,7 +33,6 @@
     "typescript": "3.7.5"
   },
   "description": "Build and control queries with confidence.",
-  "main": "dist/index.js",
   "types": "dist/packages/core/index.d.ts",
   "repository": {
     "type": "git",
