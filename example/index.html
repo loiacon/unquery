@@ -1,50 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Unquery Example</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Unquery Example</title>
 
-  <style>
-    code {
-      background-color: #EDF2F7;
-      border-radius: 4px;
-      display: inline-block;
-      padding: 1.25rem 1rem 1.35rem;
-      color: #2D3748;
-    }
+    <style>
+      .string { color: green; }
+      .var { color: chocolate }
+      .fun { color: cornflowerblue; }
+      .number { color: darkorange; }
+      .boolean { color: blue; }
+      .null { color: magenta; }
+      .key { color: red; }
+      body { font-family: sans-serif; }
+      code {
+        background-color: #edf2f7;
+        border-radius: 4px;
+        display: inline-block;
+        padding: 1.25rem 1rem 1.35rem;
+        color: #2d3748;
+        margin-bottom: 3rem;
+      }
 
-    code b {
-      display: block;
-      padding-bottom: 0.25rem;
-    }
-  </style>
-</head>
-<body>
-  <h2>Unquery example</h2>
-  <code>
-    <b>Query</b>
-    <div id="query">?foo=10&bar=20</div>
-    <br>
-    <b>Result</b>
-    <div id="result"></div>
-  </code>
+      code b {
+        display: block;
+        padding-bottom: 0.25rem;
+      }
 
-  <script src="../dist/index.js"></script>
-  <script type="module">
-    import Unquery from '../dist/index.es.js'
+      #result, #schema {
+        white-space: pre;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Unquery</h2>
 
-    const query = document.getElementById('query').innerText
-    const result = document.getElementById('result')
+    <form id="form">
+      <label>
+        Baz
+        <input id="input" type="text" autocomplete="off" />
+      </label>
+      <button type="submit">Add Baz Query</button>
+    </form>
 
-    const unquery = Unquery(query, {
-      foo: Unquery.number(),
-      bar: Unquery.string()
-    })
+    <br /><br />
+    <button type="button" id="reset">Reset Query</button>
+    <br /><br />
 
-    result.innerHTML += JSON.stringify(unquery, null, '\t')
-    console.log(unquery)
-  </script>
-</body>
+    <code>
+      <b>Query Example</b>
+      <div id="query">?foo=10&bar=20&baz=1&baz=2&baz=3</div>
+      <br />
+      <b>Result</b>
+      <div id="result"></div>
+      <br />
+      <b>From</b>
+      <div id="schema"></div>
+    </code>
+
+    <script src="../dist/index.js"></script>
+    <script type="module">
+      import {
+        Unquery,
+        replaceLocationURL,
+        clearLocationURL
+      } from '../dist/index.es.js'
+
+      const query = document.getElementById('query').innerText
+      const form = document.getElementById('form')
+      const input = document.getElementById('input')
+      const reset = document.getElementById('reset')
+
+      const result = document.getElementById('result')
+      const schema = document.getElementById('schema')
+
+      const querySchema = Unquery(query, {
+        foo: Unquery.number(),
+        bar: Unquery.string(),
+        baz: Unquery.array(Unquery.number())
+      })
+
+      result.innerHTML += syntaxHighlight(JSON.stringify(querySchema, null, 2))
+      schema.innerHTML += `<span class="key">const</span> <span class="var">querySchema</span> = <span class="fun">Unquery</span>(query, {
+  <span class="key">foo</span>: Unquery.<span class="fun">number</span>(),
+  <span class="key">bar</span>: Unquery.<span class="fun">string</span>(),
+  <span class="key">baz</span>: Unquery.<span class="fun">array</span>(Unquery.<span class="fun">number</span>())
+})`
+      form.addEventListener('submit', e => {
+        e.preventDefault()
+        replaceLocationURL({
+          // empty string will return "?baz="
+          // null will return nothing
+          baz: input.value || null
+        })
+      })
+
+      reset.addEventListener('click', () => {
+        clearLocationURL()
+      })
+
+      console.log(querySchema)
+
+      // Just ignore
+      function syntaxHighlight(json) {
+        if (typeof json != 'string') {
+          json = JSON.stringify(json, undefined, 2)
+        }
+        json = json
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+        return json.replace(
+          /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
+          function(match) {
+            var cls = 'number'
+            if (/^"/.test(match)) {
+              if (/:$/.test(match)) {
+                cls = 'key'
+              } else {
+                cls = 'string'
+              }
+            } else if (/true|false/.test(match)) {
+              cls = 'boolean'
+            } else if (/null/.test(match)) {
+              cls = 'null'
+            }
+            return '<span class="' + cls + '">' + match + '</span>'
+          }
+        )
+      }
+    </script>
+  </body>
 </html>
