@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { splitQuery, isString, safeDecodeURI } from './utils'
+import { splitQuery, isString, safeDecodeURI, isArray } from './utils'
 import { parser, parseKey } from './parser'
 import {
   UnqueryObject,
@@ -16,9 +16,9 @@ const unqueryMethods = {
   }
 }
 
-const Unquery = <T extends object>(
+export const Unquery = <T extends object>(
   input: string,
-  shape: T,
+  shape: T = {} as any,
   options?: UnqueryOptions
 ) => {
   options = {
@@ -38,7 +38,7 @@ const Unquery = <T extends object>(
     input.split('&').forEach(param => {
       const [rawKey = param, rawValue] = splitQuery(param)
 
-      const { key, isArray } = parseKey({
+      const { key, isArray: isArr } = parseKey({
         key: safeDecodeURI(rawKey),
         arrayFormat
       })
@@ -52,24 +52,31 @@ const Unquery = <T extends object>(
       const shapeConfig = shape[key] || {}
       const config = {
         // Set default innerType when
-        // matched isArray and isUnknown value
-        innerType: isArray && isUnknown && Unquery.string(),
+        // matched value isArray and isUnknown value
+        innerType: isArr && isUnknown && Unquery.string(),
         ...shapeConfig,
         pattern: shapeConfig.pattern || provideOption('parsePattern', 'pattern')
       } as UnqueryTypeReturn
 
+      if (options.arrayFormat === 'comma') {
+        ret[key] = null
+      }
       // Parsed value will be stored in unquery ret
       parser({ options, ...config, key, value, queryObject: ret })
     })
   }
 
-  for (const key in shape) {
+  Object.keys(shape).forEach(key => {
     // If value is null and exists in shape
     // but is not in current input, set value to null
-    if (!skipNull && ret[key] == null) {
+    const value = ret[key] as any
+    if (
+      (!skipNull && value == null) ||
+      (isArray(value) && value.length === 1 && value[0] === null)
+    ) {
       ret[key] = null
     }
-  }
+  })
 
   return ret
 }
@@ -89,6 +96,3 @@ Unquery.array = <T extends string | number | boolean | Date>(
     type: UnqueryType.array,
     innerType: innerType || UnqueryType.string
   } as any)
-
-// Export
-export default Unquery

@@ -1,7 +1,7 @@
 import { UnqueryArrayOptions, UnqueryDateOptions } from './types'
 import { provideOption } from './unqueryOptions'
 import { dateTokens } from './utils/date'
-import { isString } from './utils'
+import { isString, isDate, isArray } from './utils'
 
 const parseZero = (value: number) => `0${value}`.slice(-2)
 
@@ -36,7 +36,7 @@ const createPairFunction = (arr: unknown[], pattern: string) => {
       .map((value, index) => {
         const pairKey = key(index)
 
-        if (value instanceof Date) {
+        if (isDate(value)) {
           return dateFormatter(value, pairKey, pattern)
         }
         return `${pairKey}=${value}`
@@ -56,12 +56,13 @@ const arrayFormatter = (
   const createPair = createPairFunction(arr, pattern)
 
   switch (arrayFormat) {
-    case 'comma':
-      return `${key}=${arr
-        .map(value =>
-          value instanceof Date ? dateFormatter(value, '', pattern) : value
-        )
-        .join(',')}`
+    case 'comma': {
+      const value = arr
+        .map(val => (isDate(val) ? dateFormatter(val, '', pattern) : val))
+        .join(',')
+
+      return value ? `${key}=${value}` : null
+    }
     case 'index':
       return createPair(i => `${key}[${i}]`)
     case 'bracket':
@@ -89,13 +90,13 @@ export function stringify(
   return Object.keys(query)
     .map(key => {
       const value = query[key]
-      if (!value) {
+      if (value == null) {
         return ''
       }
-      if (Array.isArray(value)) {
+      if (isArray(value)) {
         return arrayFormatter(value, key, arrayFormat, pattern)
       }
-      if (value instanceof Date) {
+      if (isDate(value)) {
         return dateFormatter(value, key, pattern)
       }
       return `${key}=${value}`

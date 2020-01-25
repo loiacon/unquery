@@ -58,17 +58,17 @@ export function parser({
     queryObject[key] = formatPrimitive(value, { type, pattern })
   } else if (queryObject[key]) {
     queryObject[key].push(formatPrimitive(value, innerType))
+  } else if (value == null) {
+    queryObject[key] = [null]
   } else {
     const options = { ...unqueryOptions, ...customOptions }
 
-    switch (options.arrayFormat) {
-      case 'comma':
-        queryObject[key] = value
-          .split(',')
-          .map(val => formatPrimitive(val, innerType))
-        break
-      default:
-        queryObject[key] = [formatPrimitive(value, innerType)]
+    if (options.arrayFormat === 'comma') {
+      queryObject[key] = value
+        .split(',')
+        .map(val => formatPrimitive(val, innerType))
+    } else {
+      queryObject[key] = [formatPrimitive(value, innerType)]
     }
   }
 }
