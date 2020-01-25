@@ -27,13 +27,13 @@ npm install --save unquery
 
 ### Example 1 - Basic Usage
 ```js
-import Unquery from 'unquery'
+import { Unquery } from 'unquery'
 
-const unquery = Unquery('?foo=bar', {
+const querySchema = Unquery('?foo=bar', {
   foo: Unquery.string()
 })
 
-console.log(unquery)
+console.log(querySchema)
 ```
 ```js
 { "foo": "bar" }
@@ -43,14 +43,14 @@ console.log(unquery)
 
 ### Example 2 - Different types usage
 ```js
-const unquery = Unquery('?foo=str&bar=123&baz=1,2,3&date=2020-01-01&unnecessary=false' {
+const querySchema = Unquery('?foo=str&bar=123&baz=1,2,3&date=2020-01-01&unnecessary=false' {
   foo: Unquery.string(),
   bar: Unquery.number(),
   baz: Unquery.array(Unquery.number()),
   date: Unquery.date('YYYY-MM-DD')
 }, { arrayFormat: "comma" })
 
-console.log(unquery)
+console.log(querySchema)
 ```
 ```js
 {
@@ -65,14 +65,14 @@ console.log(unquery)
 
 ### Example 3 - Stringify usage
 ```js
-const unquery = Unquery('?foo=str&bar=123&baz=1,2,3&date=2020-01-01&unnecessary=false' {
+const querySchema = Unquery('?foo=str&bar=123&baz=1,2,3&date=2020-01-01&unnecessary=false' {
   foo: Unquery.string(),
   bar: Unquery.number(),
   baz: Unquery.array(Unquery.number()),
   date: Unquery.date('YYYY-MM-DD')
 }, { arrayFormat: "comma" })
 
-const stringified = unquery.stringify({ arrayFormat: 'bracket' })
+const stringified = querySchema.stringify({ arrayFormat: 'bracket' })
 console.log(stringified)
 ```
 ```js
@@ -191,13 +191,13 @@ const query = Unquery(...) // query is an Unquery Object
   ```
   - **Examples**
   ```js
-  const query = Unquery('?startDate=2020-01-01&viewId=4', {
+  const querySchema = Unquery('?startDate=2020-01-01&viewId=4', {
     startDate: Unquery.date(),
     viewId: Unquery.number()
   })
   // { startDate: [object Date], viewId: 4 }
 
-  const stringified = query.stringify({ pattern: 'DD/MM/YYYY' })
+  const stringified = querySchema.stringify({ pattern: 'DD/MM/YYYY' })
   // "startDate=01/01/2020&viewId=4"
   ```
 
@@ -208,15 +208,15 @@ const query = Unquery(...) // query is an Unquery Object
   - **Default** `null`
   - **Example**
   ```js
-  import { addLocationURL } from 'unquery'
+  import { Unquery, addLocationURL } from 'unquery'
 
   // https://yoursite.com/
-  const query = Unquery('?foo=bar&baz=42', {
+  const querySchema = Unquery('?foo=bar&baz=42', {
     foo: Unquery.string(),
     baz: Unquery.number()
   })
 
-  addLocationURL(query)
+  addLocationURL(querySchema)
   // https://yoursite.com?foo=bar&baz=42
 
   addLocationURL('date=2020-09-01')
@@ -229,15 +229,15 @@ const query = Unquery(...) // query is an Unquery Object
   - **Default** `null`
   - **Example**
   ```js
-  import { replaceLocationURL } from 'unquery'
+  import { Unquery, replaceLocationURL } from 'unquery'
 
   // https://yoursite.com/
-  const query = Unquery('?foo=bar&baz=42', {
+  const querySchema = Unquery('?foo=bar&baz=42', {
     foo: Unquery.string(),
     baz: Unquery.number()
   })
 
-  replaceLocationURL(query)
+  replaceLocationURL(querySchema)
   // https://yoursite.com?foo=bar&baz=42
 
   replaceLocationURL('date=2020-09-01')
@@ -249,7 +249,7 @@ const query = Unquery(...) // query is an Unquery Object
   - **Default** `null`
   - **Example**
   ```js
-  import { clearLocationURL } from 'unquery'
+  import { Unquery, clearLocationURL } from 'unquery'
 
   // https://yoursite.com/?foo=bar&baz=42
   const query = Unquery('?foo=bar&baz=42', {
@@ -284,7 +284,7 @@ const query = Unquery(...) // query is an Unquery Object
   - **Type** `(options: UnqueryOptions) => UnqueryOptions`
   - **Examples**
   ```js
-  import Unquery, { setOptions } from 'unquery'
+  import { Unquery, setOptions } from 'unquery'
 
   setOptions({
     arrayFormat: 'comma',
@@ -295,11 +295,11 @@ const query = Unquery(...) // query is an Unquery Object
     skipUnknown: false
   })
 
-  const unquery = Unquery('?date=2020-02-01&foo=1,2,3', {
+  const query = Unquery('?date=2020-02-01&foo=1,2,3', {
     date: Unquery.date()
   })
   // { date: [object Date], foo: ['1','2','3'] }
 
-  const stringified = unquery.stringify({ arrayFormat: 'index' })
+  const stringified = Unquery.stringify({ arrayFormat: 'index' })
   // 'data=01/02/2020&foo[0]=1&foo[1]=2&foo[2]=3
   ```
