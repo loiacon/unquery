@@ -14,7 +14,8 @@ export const replaceLocationURL = <T extends object>(
   query: LocationQuery<T>,
   options?: StringifyOptions
 ) => {
-  updateHistory(`?${stringify(query, options)}`)
+  const string = stringify(query, options)
+  updateHistory(string && `?${string}`)
 }
 
 /** Add query-string without removing other search */
