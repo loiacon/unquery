@@ -1,4 +1,4 @@
-import Unquery from '..'
+import { Unquery } from '..'
 
 describe('Unquery array parser', () => {
   it('should parse array', () => {
@@ -139,5 +139,28 @@ describe('Unquery array parser', () => {
       bar: [null, 0],
       baz: ['', 'foo', null]
     })
+  })
+
+  it('should not stringify empty array', () => {
+    const toParse = 'foo=1,2,3&bar&baz=1'
+    const query = Unquery(
+      toParse,
+      {
+        foo: Unquery.array(Unquery.number()),
+        bar: Unquery.array(Unquery.string()),
+        baz: Unquery.number()
+      },
+      { arrayFormat: 'comma' }
+    )
+
+    expect(query).toEqual({
+      foo: [1, 2, 3],
+      bar: null,
+      baz: 1
+    })
+    expect(query.stringify({ arrayFormat: 'index' })).toBe(
+      'foo[0]=1&foo[1]=2&foo[2]=3&baz=1'
+    )
+    expect(query.stringify({ arrayFormat: 'comma' })).toBe('foo=1,2,3&baz=1')
   })
 })

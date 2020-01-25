@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import Unquery from '..'
+import { Unquery } from '..'
 import warn from '../src/utils/warn'
 
 jest.mock('../src/utils/warn')
@@ -116,6 +116,54 @@ describe('Unquery', () => {
       e: Unquery.array()
     })
 
-    expect(query).toEqual({ a: 0, b: '0', c: '', d: null, e: [null] })
+    expect(query).toEqual({ a: 0, b: '0', c: '', d: null, e: null })
+  })
+
+  it('should replace repeated values', () => {
+    const toParse = 'foo=1,2,3&foo=3,4,5'
+
+    const query = Unquery(
+      toParse,
+      {
+        foo: Unquery.array(Unquery.number())
+      },
+      { arrayFormat: 'comma' }
+    )
+
+    expect(query).toEqual({
+      foo: [3, 4, 5]
+    })
+  })
+
+  it('should parse falsy key values', () => {
+    const toParse = '0=1&1=2&2=4'
+    const query = Unquery(toParse, {
+      0: Unquery.number(),
+      1: Unquery.number(),
+      2: Unquery.number()
+    })
+    expect(query).toEqual({
+      0: 1,
+      1: 2,
+      2: 4
+    })
+
+    const query2 = Unquery(toParse, {
+      0: Unquery.string(),
+      1: Unquery.string(),
+      2: Unquery.string()
+    })
+    expect(query2).toEqual({
+      0: '1',
+      1: '2',
+      2: '4'
+    })
+
+    const query3 = Unquery(toParse, {}, { skipUnknown: false })
+    expect(query3).toEqual({
+      0: '1',
+      1: '2',
+      2: '4'
+    })
   })
 })

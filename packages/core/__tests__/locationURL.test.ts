@@ -1,4 +1,4 @@
-import Unquery, { clearLocationURL, addLocationURL } from '..'
+import { Unquery, clearLocationURL, addLocationURL } from '..'
 import { replaceLocationURL } from '../src/locationURL'
 
 const url = 'https://unquery.com/current-url'

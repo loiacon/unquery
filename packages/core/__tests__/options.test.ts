@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import Unquery, { setOptions } from '..'
+import { Unquery, setOptions } from '..'
 import { unqueryOptions } from '../src/unqueryOptions'
 import warn from '../src/utils/warn'
 

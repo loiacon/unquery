@@ -1,4 +1,4 @@
-import Unquery, { setOptions } from '..'
+import { Unquery, setOptions } from '..'
 
 describe('Unquery config', () => {
   it('should parse with skipNull as false', () => {
