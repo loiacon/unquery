@@ -1,12 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Unquery } from '..'
 import warn from '../src/utils/warn'
+import { encode } from '../src/utils'
 
 jest.mock('../src/utils/warn')
 
+const bar = encode('/')
+const space = encode(' ')
+const colon = encode(':')
+const arroba = encode('@')
+
 describe('Unquery', () => {
   it('should parse primitives', () => {
-    const toParse = '?email=someone@example.com&userId=123'
+    const toParse = `?email=someone${arroba}example.com&userId=123`
     const unquery = Unquery(toParse, {
       email: Unquery.string(),
       userId: Unquery.number()
@@ -35,10 +41,10 @@ describe('Unquery', () => {
     })
     expect(unquery2.stringify()).toBe('isoDate=2020-01-01')
     expect(unquery2.stringify({ pattern: 'DD/MM/YYYY' })).toBe(
-      'isoDate=01/01/2020'
+      `isoDate=01${bar}01${bar}2020`
     )
     expect(unquery2.stringify({ pattern: 'YYYY-MM-DD HH:mm:ss' })).toBe(
-      'isoDate=2020-01-01 04:30:00'
+      `isoDate=2020-01-01${space}04${colon}30${colon}00`
     )
   })
 
@@ -67,7 +73,7 @@ describe('Unquery', () => {
       startDate: new Date('2020-01-01')
     })
     expect(unquery.stringify({ arrayFormat: 'comma' })).toBe(
-      'email=foo@mail.com&userId=4&arr=foo,bar,baz&open=true&startDate=2020-01-01'
+      `email=foo${arroba}mail.com&userId=4&arr=foo,bar,baz&open=true&startDate=2020-01-01`
     )
   })
 
@@ -165,5 +171,13 @@ describe('Unquery', () => {
       1: '2',
       2: '4'
     })
+  })
+
+  it('should parse unknown without shape', () => {
+    const toParse = 'foo=1&bar=2'
+    const query = Unquery(toParse, null, { skipUnknown: false })
+
+    expect(query).toEqual({ foo: '1', bar: '2' })
+    expect(query.stringify()).toEqual('foo=1&bar=2')
   })
 })

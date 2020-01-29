@@ -18,9 +18,10 @@ const unqueryMethods = {
 
 export const Unquery = <T extends object>(
   input: string,
-  shape: T = {} as any,
+  shape: T,
   options?: UnqueryOptions
 ) => {
+  shape = shape || ({} as any)
   options = {
     ...unqueryOptions,
     ...((options as any) || {})

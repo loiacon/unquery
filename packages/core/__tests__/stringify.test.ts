@@ -1,4 +1,9 @@
 import { stringify } from '..'
+import { encode } from '../src/utils'
+
+const space = encode(' ')
+const slash = encode('\\')
+const comma = encode(',')
 
 describe('stringify', () => {
   it('should stringify objects', () => {
@@ -35,5 +40,12 @@ describe('stringify', () => {
     const stringified = stringify(obj)
 
     expect(stringified).toBe('0=0&1=2&2=4')
+  })
+
+  it('should encode keys and values correctly', () => {
+    const obj = { '\\': 'some value', 'some foo': '1,2,3' }
+    expect(stringify(obj)).toBe(
+      `${slash}=some${space}value&some${space}foo=1${comma}2${comma}3`
+    )
   })
 })

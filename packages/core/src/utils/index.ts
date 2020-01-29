@@ -15,6 +15,9 @@ export const splitQuery = (string: string) => {
   return [string.slice(0, separatorIndex), string.slice(separatorIndex + 1)]
 }
 
+export const encode = (value: string | number | boolean) =>
+  encodeURIComponent(value)
+
 export const safeDecodeURI = (value: string) => {
   try {
     return decodeURIComponent(value)

@@ -1,7 +1,11 @@
 import { Unquery, clearLocationURL, addLocationURL } from '..'
 import { replaceLocationURL } from '../src/locationURL'
+import { encode } from '../src/utils'
 
 const url = 'https://unquery.com/current-url'
+
+const dash = encode('/')
+const arroba = encode('@')
 
 describe('addLocationURL', () => {
   afterEach(() => {
@@ -56,5 +60,16 @@ describe('addLocationURL', () => {
 
     expect(location.search).toBe('?bar=123')
     expect(location.href.endsWith('?bar=123#baz')).toBe(true)
+  })
+
+  it('should update correctly using encode', () => {
+    const someQuery = {
+      '/': 1,
+      email: 'joo@mail.com'
+    }
+
+    replaceLocationURL(someQuery)
+
+    expect(location.search).toBe(`?${dash}=1&email=joo${arroba}mail.com`)
   })
 })

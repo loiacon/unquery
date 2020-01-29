@@ -1,7 +1,7 @@
 import { UnqueryArrayOptions, UnqueryDateOptions } from './types'
 import { provideOption } from './unqueryOptions'
 import { dateTokens } from './utils/date'
-import { isString, isDate, isArray } from './utils'
+import { isString, isDate, isArray, encode } from './utils'
 
 const parseZero = (value: number) => `0${value}`.slice(-2)
 
@@ -23,6 +23,7 @@ const dateFormatter = (date: Date, key: string, pattern: string) => {
       pattern = pattern.replace(token[0], parsedDate[token[1]])
     }
   }
+  pattern = encode(pattern)
 
   if (!key) {
     return pattern
@@ -99,7 +100,7 @@ export function stringify(
       if (isDate(value)) {
         return dateFormatter(value, key, pattern)
       }
-      return `${key}=${value}`
+      return `${encode(key)}=${encode(value as string)}`
     })
     .filter(Boolean)
     .join('&')

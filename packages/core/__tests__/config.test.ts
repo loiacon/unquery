@@ -1,4 +1,7 @@
 import { Unquery, setOptions } from '..'
+import { encode } from '../src/utils'
+
+const bar = encode('/')
 
 describe('Unquery config', () => {
   it('should parse with skipNull as false', () => {
@@ -94,7 +97,7 @@ describe('Unquery config', () => {
       foo: Unquery.string()
     })
 
-    expect(unquery.stringify()).toBe('foo=20/10/2019')
+    expect(unquery.stringify()).toBe(`foo=20${bar}10${bar}2019`)
     expect(unquery2.stringify()).toBe('foo=2019-10-20')
   })
 
@@ -106,6 +109,6 @@ describe('Unquery config', () => {
       foo: Unquery.date()
     })
 
-    expect(unquery.stringify()).toBe('foo=24/07/2019')
+    expect(unquery.stringify()).toBe(`foo=24${bar}07${bar}2019`)
   })
 })
