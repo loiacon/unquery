@@ -40,7 +40,7 @@ const createPairFunction = (arr: unknown[], pattern: string) => {
         if (isDate(value)) {
           return dateFormatter(value, pairKey, pattern)
         }
-        return `${pairKey}=${value}`
+        return `${pairKey}=${encode(value as string)}`
       })
       .join('&')
   }
@@ -54,16 +54,18 @@ const arrayFormatter = (
   arrayFormat: UnqueryArrayOptions['arrayFormat'],
   pattern?: string
 ) => {
+  if (arrayFormat === 'comma') {
+    const value = arr
+      .map(val =>
+        isDate(val) ? dateFormatter(val, '', pattern) : encode(val as string)
+      )
+      .join(',')
+
+    return value ? `${key}=${value}` : null
+  }
   const createPair = createPairFunction(arr, pattern)
 
   switch (arrayFormat) {
-    case 'comma': {
-      const value = arr
-        .map(val => (isDate(val) ? dateFormatter(val, '', pattern) : val))
-        .join(',')
-
-      return value ? `${key}=${value}` : null
-    }
     case 'index':
       return createPair(i => `${key}[${i}]`)
     case 'bracket':
