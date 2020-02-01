@@ -35,14 +35,14 @@ describe('internals should work', () => {
   })
 
   it('should use default pattern when it not exists', () => {
-    const value = formatPrimitive('1992-02-10', { type: UnqueryType.date })
+    const value = formatPrimitive('1992-02-10', { type: UnqueryType.DATE })
 
     expect(value).toEqual(new Date('1992-02-10'))
   })
 
   it('should parse date with correct pattern', () => {
     const value = formatPrimitive('10/02/1992', {
-      type: UnqueryType.date,
+      type: UnqueryType.DATE,
       pattern: 'DD/MM/YYYY '
     })
 
