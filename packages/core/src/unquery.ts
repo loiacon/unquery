@@ -21,10 +21,10 @@ export const Unquery = <T extends object>(
   shape: T,
   options?: UnqueryOptions
 ) => {
-  shape = shape || ({} as any)
+  shape = shape || ({} as T)
   options = {
     ...unqueryOptions,
-    ...((options as any) || {})
+    ...(options || {})
   }
   const { skipNull, skipUnknown, arrayFormat } = options
   const ret: UnqueryObject<T> = Object.create(unqueryMethods)
@@ -37,13 +37,13 @@ export const Unquery = <T extends object>(
 
   if (input) {
     input.split('&').forEach(param => {
-      const [rawKey = param, rawValue] = splitQuery(param)
+      const [rawKey = param, value] = splitQuery(param)
 
       const { key, isArray: isArr } = parseKey({
         key: safeDecodeURI(rawKey),
+        value,
         arrayFormat
       })
-      const value = rawValue != null ? safeDecodeURI(rawValue) : null
       const isUnknown = !(key in shape)
 
       if (isUnknown && skipUnknown) {
@@ -60,9 +60,11 @@ export const Unquery = <T extends object>(
       } as UnqueryTypeReturn
 
       if (options.arrayFormat === 'comma') {
+        // Should reset array when format is "comma"
+        // to replace values correctly
         ret[key] = null
       }
-      // Parsed value will be stored in unquery ret
+      // Parsed value will be stored in unquery object
       parser({ options, ...config, key, value, queryObject: ret })
     })
   }
@@ -83,17 +85,17 @@ export const Unquery = <T extends object>(
 }
 
 // Unquery primitives
-Unquery.string = (): string => ({ type: UnqueryType.string } as any)
-Unquery.number = (): number => ({ type: UnqueryType.number } as any)
-Unquery.bool = (): boolean => ({ type: UnqueryType.bool } as any)
+Unquery.string = (): string => ({ type: UnqueryType.STRING } as any)
+Unquery.number = (): number => ({ type: UnqueryType.NUMBER } as any)
+Unquery.bool = (): boolean => ({ type: UnqueryType.BOOL } as any)
 
 Unquery.date = (pattern?: string): Date =>
-  ({ type: UnqueryType.date, pattern } as any)
+  ({ type: UnqueryType.DATE, pattern } as any)
 
 Unquery.array = <T extends string | number | boolean | Date>(
   innerType?: T
 ): T[] =>
   ({
-    type: UnqueryType.array,
-    innerType: innerType || UnqueryType.string
+    type: UnqueryType.ARRAY,
+    innerType: innerType || UnqueryType.STRING
   } as any)

@@ -1,11 +1,11 @@
 import { StringifyOptions } from './stringify'
 
 export enum UnqueryType {
-  string = 1,
-  number,
-  bool,
-  array,
-  date
+  STRING = 1,
+  NUMBER = 1 << 1,
+  BOOL = 1 << 2,
+  ARRAY = 1 << 3,
+  DATE = 1 << 4
 }
 export type UnqueryArrayTypes = 'comma' | 'bracket' | 'index' | 'none'
 
