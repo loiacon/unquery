@@ -141,6 +141,32 @@ describe('Unquery', () => {
     })
   })
 
+  it('should replace repeated values even when is unknown key', () => {
+    const toParse = 'foo=3,4,5'
+
+    const query = Unquery(toParse, null, {
+      arrayFormat: 'comma',
+      skipUnknown: false
+    })
+
+    expect(query).toEqual({
+      foo: ['3', '4', '5']
+    })
+  })
+
+  it('should not split on encoded commas', () => {
+    const toParse = 'foo=zero%2Cone,two%2Cthree'
+    const query = Unquery(
+      toParse,
+      { foo: Unquery.array() },
+      { arrayFormat: 'comma' }
+    )
+
+    expect(query).toEqual({
+      foo: ['zero,one', 'two,three']
+    })
+  })
+
   it('should parse falsy key values', () => {
     const toParse = '0=1&1=2&2=4'
     const query = Unquery(toParse, {
