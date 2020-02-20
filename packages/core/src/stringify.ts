@@ -81,6 +81,7 @@ const stringifyOptions = (): StringifyOptions => ({
   pattern: provideOption('encodePattern', 'pattern')
 })
 
+/** Stringify a query object into string */
 export function stringify(
   query: { [k: string]: unknown } | string,
   options?: StringifyOptions
