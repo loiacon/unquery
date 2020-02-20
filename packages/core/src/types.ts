@@ -26,11 +26,15 @@ export interface UnqueryOptions
   skipUnknown?: boolean
 }
 
+type UnqueryConstructor = {
+  /** Stringify current query object into a string */
+  stringify?(options?: StringifyOptions): string
+}
+
 export type UnqueryObject<T extends object> = {
   [k in keyof T]?: T[k]
-} & {
-  stringify: (options?: StringifyOptions) => string
-}
+} &
+  UnqueryConstructor
 
 export type UnqueryTypeReturn = {
   type: UnqueryType
