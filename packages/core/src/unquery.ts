@@ -7,14 +7,7 @@ import {
   UnqueryType,
   UnqueryTypeReturn
 } from './types'
-import { unqueryOptions, provideOption } from './unqueryOptions'
-import { stringify, StringifyOptions } from './stringify'
-
-const unqueryMethods = {
-  stringify(options?: StringifyOptions) {
-    return stringify(this, options)
-  }
-}
+import { unqueryOptions } from './unqueryOptions'
 
 export const Unquery = <T extends object>(
   input: string,
@@ -27,7 +20,7 @@ export const Unquery = <T extends object>(
     ...(options || {})
   }
   const { skipNull, skipUnknown, arrayFormat } = options
-  const ret: UnqueryObject<T> = Object.create(unqueryMethods)
+  const ret: UnqueryObject<T> = Object.create({})
 
   if (!isString(input)) {
     return ret
@@ -55,8 +48,7 @@ export const Unquery = <T extends object>(
         // Set default innerType when
         // matched value isArray and isUnknown value
         innerType: isArr && isUnknown && Unquery.string(),
-        ...shapeConfig,
-        pattern: shapeConfig.pattern || provideOption('parsePattern', 'pattern')
+        ...shapeConfig
       } as UnqueryTypeReturn
 
       if (options.arrayFormat === 'comma') {
@@ -88,13 +80,7 @@ export const Unquery = <T extends object>(
 Unquery.string = (): string => ({ type: UnqueryType.STRING } as any)
 Unquery.number = (): number => ({ type: UnqueryType.NUMBER } as any)
 Unquery.bool = (): boolean => ({ type: UnqueryType.BOOL } as any)
-
-Unquery.date = (pattern?: string): Date =>
-  ({ type: UnqueryType.DATE, pattern } as any)
-
-Unquery.array = <T extends string | number | boolean | Date>(
-  innerType?: T
-): T[] =>
+Unquery.array = <T extends string | number | boolean>(innerType?: T): T[] =>
   ({
     type: UnqueryType.ARRAY,
     innerType: innerType || UnqueryType.STRING
