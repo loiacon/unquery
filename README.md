@@ -47,7 +47,7 @@ const querySchema = Unquery('?foo=str&bar=123&baz=1,2,3&date=2020-01-01&unnecess
   foo: Unquery.string(),
   bar: Unquery.number(),
   baz: Unquery.array(Unquery.number()),
-  date: Unquery.date('YYYY-MM-DD')
+  date: Unquery.string()
 }, { arrayFormat: "comma" })
 
 console.log(querySchema)
@@ -57,7 +57,7 @@ console.log(querySchema)
   "foo": "str",
   "bar": 123,
   "baz": [ 1, 2, 3 ],
-  "date": [object Date] // will return a JavaScript date
+  "date": "2020-01-01"
 }
 ```
 
@@ -65,18 +65,20 @@ console.log(querySchema)
 
 ### Example 3 - Stringify usage
 ```js
+import { Unquery, stringify } from "unquery"
+
 const querySchema = Unquery('?foo=str&bar=123&baz=1,2,3&date=2020-01-01&unnecessary=false' {
   foo: Unquery.string(),
   bar: Unquery.number(),
   baz: Unquery.array(Unquery.number()),
-  date: Unquery.date('YYYY-MM-DD')
+  date: Unquery.array()
 }, { arrayFormat: "comma" })
 
-const stringified = querySchema.stringify({ arrayFormat: 'bracket' })
+const stringified = stringify(querySchema, { arrayFormat: 'bracket' })
 console.log(stringified)
 ```
 ```js
-"?foo=str&bar=123&baz[]=1&baz[]=2&baz[]=3&date=2020-01-01"
+"?foo=str&bar=123&baz[]=1&baz[]=2&baz[]=3&date[]=2020-01-01"
 ```
 
 ## API
@@ -95,24 +97,6 @@ Your query-string schema, that's gonna be parsed.
 Options to customize the schema that's gonna be generated.
 
 **Options**
-
-- **pattern**
-  - **Description** Used to parse Unquery.date query-strings. It uses tokens to create the format.
-  - **Type** `string`
-  - **Default** `YYYY-MM-DD`
-  - **Tokens** current supported tokens:
-  ```js
-  {
-    "YYYY": "4-digits Year",
-    "MM": "Month",
-    "DD": "Day",
-    "HH": "Hours",
-    "mm": "Minutes",
-    "ss": "Seconds"
-  }
-  ```
-
- <br>
 
 - **arrayFormat**
   - **Description** Array format to parse query-string. Use the same format used by [query-string](https://github.com/sindresorhus/query-string).
@@ -176,30 +160,6 @@ When you create an `Unquery Object`, your query will receive some super powers â
 ```js
 const query = Unquery(...) // query is an Unquery Object
 ```
-
-#### Methods
-- **stringify**
-  - **Description** stringify your object and return his value
-  - **Type** `(options: StringifyOptions) => string`
-  - **Default**
-  ```js
-  {
-    // You can set your unqueryOptions by calling setOptions(options)
-    arrayFormat: unqueryOptions.arrayFormat // default: 'none',
-    pattern: unqueryOptions.pattern // default: 'YYYY-MM-DD'
-  }
-  ```
-  - **Examples**
-  ```js
-  const querySchema = Unquery('?startDate=2020-01-01&viewId=4', {
-    startDate: Unquery.date(),
-    viewId: Unquery.number()
-  })
-  // { startDate: [object Date], viewId: 4 }
-
-  const stringified = querySchema.stringify({ pattern: 'DD/MM/YYYY' })
-  // "startDate=01/01/2020&viewId=4"
-  ```
 
 #### Global API
 - **addLocationURL**
@@ -267,8 +227,7 @@ const query = Unquery(...) // query is an Unquery Object
   ```js
   {
     // You can set your unqueryOptions by calling setOptions(options)
-    arrayFormat: unqueryOptions.arrayFormat // default: 'none',
-    pattern: unqueryOptions.pattern // default: 'YYYY-MM-DD'
+    arrayFormat: unqueryOptions.arrayFormat // default: 'none'
   }
   ```
   - **Examples**
@@ -284,22 +243,19 @@ const query = Unquery(...) // query is an Unquery Object
   - **Type** `(options: UnqueryOptions) => UnqueryOptions`
   - **Examples**
   ```js
-  import { Unquery, setOptions } from 'unquery'
+  import { Unquery, stringify, setOptions } from 'unquery'
 
   setOptions({
     arrayFormat: 'comma',
-    pattern: 'YYYY-MM-DD',
-    parsePattern: null,
-    encodePattern: 'DD/MM/YYYY',
     skipNull: true,
     skipUnknown: false
   })
 
   const query = Unquery('?date=2020-02-01&foo=1,2,3', {
-    date: Unquery.date()
+    date: Unquery.string()
   })
-  // { date: [object Date], foo: ['1','2','3'] }
+  // { date: "2020-02-01", foo: ['1','2','3'] }
 
-  const stringified = Unquery.stringify({ arrayFormat: 'index' })
+  const stringified = stringify(Unquery, { arrayFormat: 'index' })
   // 'data=01/02/2020&foo[0]=1&foo[1]=2&foo[2]=3
   ```
