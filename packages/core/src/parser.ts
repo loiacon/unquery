@@ -42,7 +42,6 @@ export interface ParserOptions {
   value: string
   queryObject: object
   innerType?: UnqueryTypeReturn
-  pattern?: string
 }
 
 export function parser({
@@ -51,11 +50,10 @@ export function parser({
   key,
   value,
   queryObject,
-  innerType,
-  pattern
+  innerType
 }: ParserOptions) {
   if (!innerType) {
-    queryObject[key] = formatPrimitive(value, { type, pattern })
+    queryObject[key] = formatPrimitive(value, { type })
   } else if (queryObject[key]) {
     queryObject[key].push(formatPrimitive(value, innerType))
   } else if (value == null) {

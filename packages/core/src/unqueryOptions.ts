@@ -6,9 +6,6 @@ import warn from './utils/warn'
  * Initial unqueryOptions, this can be changed by calling `setOptions`
  */
 export const unqueryOptions: UnqueryOptions = {
-  parsePattern: null,
-  encodePattern: null,
-  pattern: 'YYYY-MM-DD',
   arrayFormat: 'none',
   skipNull: false,
   skipUnknown: true

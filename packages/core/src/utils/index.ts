@@ -3,7 +3,6 @@ export const { isArray } = Array
 export const isString = (val: unknown): val is string => typeof val === 'string'
 export const isObject = (val: unknown): val is object =>
   val && typeof val === 'object' && !isArray(val)
-export const isDate = (val: unknown): val is Date => val instanceof Date
 
 export const splitQuery = (string: string) => {
   const separatorIndex = string.indexOf('=')

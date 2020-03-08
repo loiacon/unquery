@@ -1,46 +1,12 @@
-import { UnqueryArrayOptions, UnqueryDateOptions } from './types'
+import { UnqueryArrayOptions } from './types'
 import { provideOption } from './unqueryOptions'
-import { dateTokens } from './utils/date'
-import { isString, isDate, isArray, encode } from './utils'
+import { isString, isArray, encode } from './utils'
 
-const parseZero = (value: number) => `0${value}`.slice(-2)
-
-const dateFormatter = (date: Date, key: string, pattern: string) => {
-  const parsedDate = {
-    day: parseZero(date.getUTCDate()),
-    month: parseZero(date.getUTCMonth() + 1),
-    hours: parseZero(date.getUTCHours()),
-    year: `${date.getUTCFullYear()}`,
-    minutes: parseZero(date.getUTCMinutes()),
-    seconds: parseZero(date.getUTCSeconds())
-  }
-
-  for (let i = 0; i < pattern.length; i++) {
-    const letter = pattern[i]
-
-    const token = dateTokens[letter]
-    if (token) {
-      pattern = pattern.replace(token[0], parsedDate[token[1]])
-    }
-  }
-  pattern = encode(pattern)
-
-  if (!key) {
-    return pattern
-  }
-  return `${key}=${pattern}`
-}
-
-const createPairFunction = (arr: unknown[], pattern: string) => {
+const createPairFunction = (arr: unknown[]) => {
   const createPair = (key: (index: number) => string) => {
     return arr
       .map((value, index) => {
-        const pairKey = key(index)
-
-        if (isDate(value)) {
-          return dateFormatter(value, pairKey, pattern)
-        }
-        return `${pairKey}=${encode(value as string)}`
+        return `${key(index)}=${encode(value as string)}`
       })
       .join('&')
   }
@@ -51,19 +17,14 @@ const createPairFunction = (arr: unknown[], pattern: string) => {
 const arrayFormatter = (
   arr: unknown[],
   key: string,
-  arrayFormat: UnqueryArrayOptions['arrayFormat'],
-  pattern?: string
+  arrayFormat: UnqueryArrayOptions['arrayFormat']
 ) => {
   if (arrayFormat === 'comma') {
-    const value = arr
-      .map(val =>
-        isDate(val) ? dateFormatter(val, '', pattern) : encode(val as string)
-      )
-      .join(',')
+    const value = arr.map(val => encode(val as string)).join(',')
 
     return value ? `${key}=${value}` : null
   }
-  const createPair = createPairFunction(arr, pattern)
+  const createPair = createPairFunction(arr)
 
   switch (arrayFormat) {
     case 'index':
@@ -75,10 +36,9 @@ const arrayFormatter = (
   }
 }
 
-export type StringifyOptions = UnqueryArrayOptions & UnqueryDateOptions
+export type StringifyOptions = UnqueryArrayOptions
 const stringifyOptions = (): StringifyOptions => ({
-  arrayFormat: provideOption('arrayFormat'),
-  pattern: provideOption('encodePattern', 'pattern')
+  arrayFormat: provideOption('arrayFormat')
 })
 
 /** Stringify a query object into string */
@@ -89,7 +49,7 @@ export function stringify(
   if (isString(query)) {
     return query.trim().replace(/^[?#&]/, '')
   }
-  const { arrayFormat, pattern } = { ...stringifyOptions(), ...options }
+  const { arrayFormat } = { ...stringifyOptions(), ...options }
 
   return Object.keys(query)
     .map(key => {
@@ -98,10 +58,7 @@ export function stringify(
         return ''
       }
       if (isArray(value)) {
-        return arrayFormatter(value, key, arrayFormat, pattern)
-      }
-      if (isDate(value)) {
-        return dateFormatter(value, key, pattern)
+        return arrayFormatter(value, key, arrayFormat)
       }
       return `${encode(key)}=${encode(value as string)}`
     })
