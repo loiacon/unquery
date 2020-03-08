@@ -1,13 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Unquery } from '..'
-import warn from '../src/utils/warn'
+import { Unquery, stringify } from '..'
 import { encode } from '../src/utils'
 
 jest.mock('../src/utils/warn')
 
-const bar = encode('/')
-const space = encode(' ')
-const colon = encode(':')
 const arroba = encode('@')
 
 describe('Unquery', () => {
@@ -24,30 +20,6 @@ describe('Unquery', () => {
     })
   })
 
-  it('should parse date', () => {
-    const toParse = '?isoDate=2020-01-01'
-    const unquery = Unquery(toParse, { isoDate: Unquery.date() })
-
-    expect(unquery).toEqual({
-      isoDate: new Date('2020-01-01')
-    })
-
-    const toParse2 = '?isoDate=2020-01-01T04:30:00'
-    const unquery2 = Unquery(toParse2, {
-      isoDate: Unquery.date('YYYY-MM-DDTHH:mm:ss')
-    })
-    expect(unquery2).toEqual({
-      isoDate: new Date('2020-01-01T04:30:00.000Z')
-    })
-    expect(unquery2.stringify()).toBe('isoDate=2020-01-01')
-    expect(unquery2.stringify({ pattern: 'DD/MM/YYYY' })).toBe(
-      `isoDate=01${bar}01${bar}2020`
-    )
-    expect(unquery2.stringify({ pattern: 'YYYY-MM-DD HH:mm:ss' })).toBe(
-      `isoDate=2020-01-01${space}04${colon}30${colon}00`
-    )
-  })
-
   it('should stringify multiple warnMocks', () => {
     const toParse =
       '?email=foo@mail.com&userId=4&arr=foo,bar,baz&open=true&startDate=2020-01-01&unknown=bar'
@@ -58,7 +30,7 @@ describe('Unquery', () => {
         userId: Unquery.number(),
         arr: Unquery.array(),
         open: Unquery.bool(),
-        startDate: Unquery.date()
+        startDate: Unquery.string()
       },
       {
         arrayFormat: 'comma'
@@ -70,23 +42,10 @@ describe('Unquery', () => {
       userId: 4,
       arr: ['foo', 'bar', 'baz'],
       open: true,
-      startDate: new Date('2020-01-01')
+      startDate: '2020-01-01'
     })
-    expect(unquery.stringify({ arrayFormat: 'comma' })).toBe(
+    expect(stringify(unquery, { arrayFormat: 'comma' })).toBe(
       `email=foo${arroba}mail.com&userId=4&arr=foo,bar,baz&open=true&startDate=2020-01-01`
-    )
-  })
-
-  it('should ignore date with unknown format', () => {
-    const toParse = 'foo=10-02-1996'
-    const query = Unquery(toParse, {
-      foo: Unquery.date('YYYY-MM-DD')
-    })
-
-    expect(query).toEqual({ foo: '10-02-1996' })
-    expect(warn).toHaveBeenCalledTimes(1)
-    expect(warn).toHaveBeenCalledWith(
-      'Provided value "10-02-1996" is not matching pattern "YYYY-MM-DD".'
     )
   })
 
@@ -204,6 +163,6 @@ describe('Unquery', () => {
     const query = Unquery(toParse, null, { skipUnknown: false })
 
     expect(query).toEqual({ foo: '1', bar: '2' })
-    expect(query.stringify()).toEqual('foo=1&bar=2')
+    expect(stringify(query)).toEqual('foo=1&bar=2')
   })
 })

@@ -1,4 +1,4 @@
-import { Unquery } from '..'
+import { Unquery, stringify } from '..'
 
 describe('Unquery array parser', () => {
   it('should parse array', () => {
@@ -59,18 +59,18 @@ describe('Unquery array parser', () => {
     const unquery = Unquery(
       toParse,
       {
-        date: Unquery.array(Unquery.date('YYYY-MM-DD'))
+        date: Unquery.array(Unquery.string())
       },
       { arrayFormat: 'comma' }
     )
 
     expect(unquery).toEqual({
-      date: [new Date('2020-01-01'), new Date('2020-02-01')]
+      date: ['2020-01-01', '2020-02-01']
     })
-    expect(unquery.stringify({ arrayFormat: 'index' })).toBe(
+    expect(stringify(unquery, { arrayFormat: 'index' })).toBe(
       'date[0]=2020-01-01&date[1]=2020-02-01'
     )
-    expect(unquery.stringify({ arrayFormat: 'comma' })).toBe(
+    expect(stringify(unquery, { arrayFormat: 'comma' })).toBe(
       'date=2020-01-01,2020-02-01'
     )
   })
@@ -89,14 +89,16 @@ describe('Unquery array parser', () => {
       bracketArray: [1, 2]
     })
 
-    expect(unquery.stringify({ arrayFormat: 'comma' })).toBe('bracketArray=1,2')
-    expect(unquery.stringify({ arrayFormat: 'none' })).toBe(
+    expect(stringify(unquery, { arrayFormat: 'comma' })).toBe(
+      'bracketArray=1,2'
+    )
+    expect(stringify(unquery, { arrayFormat: 'none' })).toBe(
       'bracketArray=1&bracketArray=2'
     )
-    expect(unquery.stringify({ arrayFormat: 'bracket' })).toBe(
+    expect(stringify(unquery, { arrayFormat: 'bracket' })).toBe(
       'bracketArray[]=1&bracketArray[]=2'
     )
-    expect(unquery.stringify({ arrayFormat: 'index' })).toBe(
+    expect(stringify(unquery, { arrayFormat: 'index' })).toBe(
       'bracketArray[0]=1&bracketArray[1]=2'
     )
   })
@@ -158,9 +160,9 @@ describe('Unquery array parser', () => {
       bar: null,
       baz: 1
     })
-    expect(query.stringify({ arrayFormat: 'index' })).toBe(
+    expect(stringify(query, { arrayFormat: 'index' })).toBe(
       'foo[0]=1&foo[1]=2&foo[2]=3&baz=1'
     )
-    expect(query.stringify({ arrayFormat: 'comma' })).toBe('foo=1,2,3&baz=1')
+    expect(stringify(query, { arrayFormat: 'comma' })).toBe('foo=1,2,3&baz=1')
   })
 })
