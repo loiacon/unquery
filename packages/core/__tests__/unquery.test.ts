@@ -177,6 +177,14 @@ describe('Unquery', () => {
     expect(stringify(query)).toBe('foo=2&bar=10')
   })
 
+  it('should custom work without value', () => {
+    const toParse = 'foo=1'
+    const query = Unquery(toParse, {
+      foo: Unquery.custom()
+    })
+    expect(query).toEqual({ foo: '1' })
+  })
+
   it('should custom work inside array', () => {
     setOptions({ arrayFormat: 'comma' })
 
