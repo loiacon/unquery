@@ -85,3 +85,9 @@ Unquery.array = <T extends string | number | boolean>(innerType?: T): T[] =>
     type: UnqueryType.ARRAY,
     innerType: innerType || UnqueryType.STRING
   } as any)
+
+Unquery.custom = <T>(callback?: (value: string) => T): T =>
+  ({
+    type: UnqueryType.CUSTOM,
+    customCallback: callback || (value => value)
+  } as any)

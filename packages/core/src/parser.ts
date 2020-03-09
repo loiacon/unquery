@@ -42,6 +42,7 @@ export interface ParserOptions {
   value: string
   queryObject: object
   innerType?: UnqueryTypeReturn
+  customCallback?(value: string): never
 }
 
 export function parser({
@@ -50,10 +51,11 @@ export function parser({
   key,
   value,
   queryObject,
-  innerType
+  innerType,
+  customCallback
 }: ParserOptions) {
   if (!innerType) {
-    queryObject[key] = formatPrimitive(value, { type })
+    queryObject[key] = formatPrimitive(value, { type, customCallback })
   } else if (queryObject[key]) {
     queryObject[key].push(formatPrimitive(value, innerType))
   } else if (value == null) {

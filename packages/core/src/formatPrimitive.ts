@@ -1,7 +1,10 @@
 import { UnqueryType, UnqueryTypeReturn } from './types'
 import { safeDecodeURI } from './utils'
 
-function formatPrimitive(value: string, { type }: UnqueryTypeReturn) {
+function formatPrimitive(
+  value: string,
+  { type, customCallback }: UnqueryTypeReturn
+) {
   if (value == null) {
     return null
   }
@@ -17,6 +20,10 @@ function formatPrimitive(value: string, { type }: UnqueryTypeReturn) {
 
   if (type & UnqueryType.BOOL) {
     return Boolean(value)
+  }
+
+  if (type & UnqueryType.CUSTOM) {
+    return customCallback(value)
   }
 
   return value

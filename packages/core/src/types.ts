@@ -2,7 +2,8 @@ export enum UnqueryType {
   STRING = 1,
   NUMBER = 1 << 1,
   BOOL = 1 << 2,
-  ARRAY = 1 << 3
+  ARRAY = 1 << 3,
+  CUSTOM = 1 << 4
 }
 export type UnqueryArrayTypes = 'comma' | 'bracket' | 'index' | 'none'
 
@@ -22,4 +23,5 @@ export type UnqueryObject<T extends object> = {
 export type UnqueryTypeReturn = {
   type: UnqueryType
   innerType?: UnqueryTypeReturn
+  customCallback?(value: string): never
 }
