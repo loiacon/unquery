@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Unquery, stringify } from '..'
+import { Unquery, stringify, setOptions } from '..'
 import { encode } from '../src/utils'
 
 jest.mock('../src/utils/warn')
@@ -164,5 +164,27 @@ describe('Unquery', () => {
 
     expect(query).toEqual({ foo: '1', bar: '2' })
     expect(stringify(query)).toEqual('foo=1&bar=2')
+  })
+
+  it('should work correctly with custom value', () => {
+    const toParse = 'foo=1&bar=2'
+    const query = Unquery(toParse, {
+      foo: Unquery.custom(value => +value * 2),
+      bar: Unquery.custom(value => +value * 5)
+    })
+
+    expect(query).toEqual({ foo: 2, bar: 10 })
+    expect(stringify(query)).toBe('foo=2&bar=10')
+  })
+
+  it('should custom work inside array', () => {
+    setOptions({ arrayFormat: 'comma' })
+
+    const toParse = 'foo=1,2,3'
+    const query = Unquery(toParse, {
+      foo: Unquery.array(Unquery.custom(value => +value * 2))
+    })
+    expect(query).toEqual({ foo: [2, 4, 6] })
+    expect(stringify(query)).toBe('foo=2,4,6')
   })
 })
