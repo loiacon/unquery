@@ -29,25 +29,27 @@ npm install --save unquery
 ```js
 import { Unquery } from 'unquery'
 
-const querySchema = Unquery('?foo=bar', {
-  foo: Unquery.string()
+const querySchema = Unquery('?foo=bar&baz=1', {
+  foo: Unquery.string(),
+  baz: Unquery.number()
 })
 
 console.log(querySchema)
 ```
 ```js
-{ "foo": "bar" }
+{ "foo": "bar", "baz": 1 }
 ```
 
 ---
 
 ### Example 2 - Different types usage
 ```js
-const querySchema = Unquery('?foo=str&bar=123&baz=1,2,3&date=2020-01-01&unnecessary=false' {
+const querySchema = Unquery('?foo=str&bar=123&baz=1,2,3&date=2020-01-01&num=10&unnecessary=false' {
   foo: Unquery.string(),
   bar: Unquery.number(),
   baz: Unquery.array(Unquery.number()),
-  date: Unquery.string()
+  date: Unquery.string(),
+  num: Unquery.custom(value => Number(value) * 2)
 }, { arrayFormat: "comma" })
 
 console.log(querySchema)
@@ -57,7 +59,8 @@ console.log(querySchema)
   "foo": "str",
   "bar": 123,
   "baz": [ 1, 2, 3 ],
-  "date": "2020-01-01"
+  "date": "2020-01-01",
+  "num": 20
 }
 ```
 
