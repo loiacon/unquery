@@ -5,11 +5,12 @@ import {
   UnqueryObject,
   UnqueryOptions,
   UnqueryType,
-  UnqueryTypeReturn
+  UnqueryTypeReturn,
+  GenericObject,
 } from './types'
 import { unqueryOptions } from './unqueryOptions'
 
-export const Unquery = <T extends object>(
+export const Unquery = <T extends GenericObject>(
   input: string,
   shape: T,
   options?: UnqueryOptions
@@ -17,10 +18,10 @@ export const Unquery = <T extends object>(
   shape = shape || ({} as T)
   options = {
     ...unqueryOptions,
-    ...(options || {})
+    ...(options || {}),
   }
   const { skipNull, skipUnknown, arrayFormat } = options
-  const ret: UnqueryObject<T> = Object.create({})
+  const ret: GenericObject = Object.create({})
 
   if (!isString(input)) {
     return ret
@@ -29,13 +30,13 @@ export const Unquery = <T extends object>(
   input = input.trim().replace(/^[?#&]/, '')
 
   if (input) {
-    input.split('&').forEach(param => {
+    input.split('&').forEach((param) => {
       const [rawKey = param, value] = splitQuery(param)
 
       const { key, isArray: isArr } = parseKey({
         key: safeDecodeURI(rawKey),
         value,
-        arrayFormat
+        arrayFormat,
       })
       const isUnknown = !(key in shape)
 
@@ -48,7 +49,7 @@ export const Unquery = <T extends object>(
         // Set default innerType when
         // matched value isArray and isUnknown value
         innerType: isArr && isUnknown && Unquery.string(),
-        ...shapeConfig
+        ...shapeConfig,
       } as UnqueryTypeReturn
 
       if (options.arrayFormat === 'comma') {
@@ -61,10 +62,10 @@ export const Unquery = <T extends object>(
     })
   }
 
-  Object.keys(shape).forEach(key => {
+  Object.keys(shape).forEach((key) => {
     // If value is null and exists in shape
     // but is not in current input, set value to null
-    const value = ret[key] as any
+    const value = ret[key]
     if (
       (!skipNull && value == null) ||
       (isArray(value) && value.length === 1 && value[0] === null)
@@ -73,7 +74,7 @@ export const Unquery = <T extends object>(
     }
   })
 
-  return ret
+  return ret as UnqueryObject<T>
 }
 
 // Unquery primitives
@@ -83,11 +84,11 @@ Unquery.bool = (): boolean => ({ type: UnqueryType.BOOL } as any)
 Unquery.array = <T extends string | number | boolean>(innerType?: T): T[] =>
   ({
     type: UnqueryType.ARRAY,
-    innerType: innerType || UnqueryType.STRING
+    innerType: innerType || UnqueryType.STRING,
   } as any)
 
 Unquery.custom = <T>(callback?: (value: string) => T): T =>
   ({
     type: UnqueryType.CUSTOM,
-    customCallback: callback || (value => value)
+    customCallback: callback || ((value) => value),
   } as any)

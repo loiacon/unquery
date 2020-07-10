@@ -1,22 +1,23 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export enum UnqueryType {
   STRING = 1,
   NUMBER = 1 << 1,
   BOOL = 1 << 2,
   ARRAY = 1 << 3,
-  CUSTOM = 1 << 4
+  CUSTOM = 1 << 4,
 }
 export type UnqueryArrayTypes = 'comma' | 'bracket' | 'index' | 'none'
 
-export interface UnqueryArrayOptions {
+export type UnqueryArrayOptions = {
   arrayFormat?: UnqueryArrayTypes
 }
 
-export interface UnqueryOptions extends UnqueryArrayOptions {
+export type UnqueryOptions = UnqueryArrayOptions & {
   skipNull?: boolean
   skipUnknown?: boolean
 }
 
-export type UnqueryObject<T extends object> = {
+export type UnqueryObject<T extends GenericObject> = {
   [k in keyof T]?: T[k]
 }
 
@@ -25,3 +26,5 @@ export type UnqueryTypeReturn = {
   innerType?: UnqueryTypeReturn
   customCallback?(value: string): never
 }
+
+export type GenericObject<T = any> = Record<string, T>

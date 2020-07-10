@@ -8,7 +8,7 @@ import warn from './utils/warn'
 export const unqueryOptions: UnqueryOptions = {
   arrayFormat: 'none',
   skipNull: false,
-  skipUnknown: true
+  skipUnknown: true,
 }
 
 /** Change global unqueryOptions */

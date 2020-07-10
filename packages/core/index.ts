@@ -4,5 +4,5 @@ export { stringify } from './src/stringify'
 export {
   addLocationURL,
   replaceLocationURL,
-  clearLocationURL
+  clearLocationURL,
 } from './src/locationURL'

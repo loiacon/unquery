@@ -7,14 +7,14 @@ describe('Unquery array parser', () => {
       toParse,
       {
         someArray: Unquery.array(Unquery.number()),
-        someOtherArray: Unquery.array(Unquery.string())
+        someOtherArray: Unquery.array(Unquery.string()),
       },
       { arrayFormat: 'comma' }
     )
 
     expect(unquery).toEqual({
       someArray: [1, 2, 3],
-      someOtherArray: ['1', '2', '3']
+      someOtherArray: ['1', '2', '3'],
     })
   })
 
@@ -23,13 +23,13 @@ describe('Unquery array parser', () => {
     const unquery = Unquery(
       toParse,
       {
-        foo: Unquery.array()
+        foo: Unquery.array(),
       },
       { arrayFormat: 'index' }
     )
 
     expect(unquery).toEqual({
-      foo: ['1', '2']
+      foo: ['1', '2'],
     })
   })
 
@@ -40,17 +40,17 @@ describe('Unquery array parser', () => {
       {
         someArray: Unquery.array(Unquery.number()),
         someValue: Unquery.string(),
-        someBool: Unquery.bool()
+        someBool: Unquery.bool(),
       },
       {
-        arrayFormat: 'comma'
+        arrayFormat: 'comma',
       }
     )
 
     expect(unquery).toEqual({
       someArray: [1, 2, 3],
       someValue: 'foo',
-      someBool: true
+      someBool: true,
     })
   })
 
@@ -59,13 +59,13 @@ describe('Unquery array parser', () => {
     const unquery = Unquery(
       toParse,
       {
-        date: Unquery.array(Unquery.string())
+        date: Unquery.array(Unquery.string()),
       },
       { arrayFormat: 'comma' }
     )
 
     expect(unquery).toEqual({
-      date: ['2020-01-01', '2020-02-01']
+      date: ['2020-01-01', '2020-02-01'],
     })
     expect(stringify(unquery, { arrayFormat: 'index' })).toBe(
       'date[0]=2020-01-01&date[1]=2020-02-01'
@@ -80,13 +80,13 @@ describe('Unquery array parser', () => {
     const unquery = Unquery(
       toParse,
       {
-        bracketArray: Unquery.array(Unquery.number())
+        bracketArray: Unquery.array(Unquery.number()),
       },
       { arrayFormat: 'bracket' }
     )
 
     expect(unquery).toEqual({
-      bracketArray: [1, 2]
+      bracketArray: [1, 2],
     })
 
     expect(stringify(unquery, { arrayFormat: 'comma' })).toBe(
@@ -120,7 +120,7 @@ describe('Unquery array parser', () => {
     const unquery = Unquery(
       toParse,
       {
-        foo: Unquery.array(Unquery.number())
+        foo: Unquery.array(Unquery.number()),
       },
       { arrayFormat: 'none' }
     )
@@ -133,13 +133,13 @@ describe('Unquery array parser', () => {
     const query = Unquery(toParse, {
       foo: Unquery.array(Unquery.bool()),
       bar: Unquery.array(Unquery.number()),
-      baz: Unquery.array(Unquery.string())
+      baz: Unquery.array(Unquery.string()),
     })
 
     expect(query).toEqual({
       foo: [null, true],
       bar: [null, 0],
-      baz: ['', 'foo', null]
+      baz: ['', 'foo', null],
     })
   })
 
@@ -150,7 +150,7 @@ describe('Unquery array parser', () => {
       {
         foo: Unquery.array(Unquery.number()),
         bar: Unquery.array(Unquery.string()),
-        baz: Unquery.number()
+        baz: Unquery.number(),
       },
       { arrayFormat: 'comma' }
     )
@@ -158,7 +158,7 @@ describe('Unquery array parser', () => {
     expect(query).toEqual({
       foo: [1, 2, 3],
       bar: null,
-      baz: 1
+      baz: 1,
     })
     expect(stringify(query, { arrayFormat: 'index' })).toBe(
       'foo[0]=1&foo[1]=2&foo[2]=3&baz=1'

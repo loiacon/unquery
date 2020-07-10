@@ -11,7 +11,7 @@ describe('Unquery global options', () => {
 
     const toParse = 'arr=1,2,3'
     const unquery = Unquery(toParse, {
-      arr: Unquery.array(Unquery.number())
+      arr: Unquery.array(Unquery.number()),
     })
 
     expect(unquery).toEqual({ arr: [1, 2, 3] })
@@ -24,7 +24,7 @@ describe('Unquery global options', () => {
     const unquery = Unquery(
       toParse,
       {
-        arr: Unquery.array(Unquery.number())
+        arr: Unquery.array(Unquery.number()),
       },
       { arrayFormat: 'comma' }
     )
@@ -39,10 +39,10 @@ describe('Unquery global options', () => {
     const query = Unquery(
       'foo[]=1&foo[]=2',
       {
-        foo: Unquery.array(Unquery.number())
+        foo: Unquery.array(Unquery.number()),
       },
       {
-        arrayFormat: 'bracket'
+        arrayFormat: 'bracket',
       }
     )
 

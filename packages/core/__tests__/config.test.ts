@@ -10,7 +10,7 @@ describe('Unquery config', () => {
     )
 
     expect(unquery).toEqual({
-      someNull: null
+      someNull: null,
     })
   })
 
@@ -35,7 +35,7 @@ describe('Unquery config', () => {
 
     expect(unquery).toEqual({
       someValue: '123',
-      unknownQuery: '456'
+      unknownQuery: '456',
     })
   })
 
@@ -48,7 +48,7 @@ describe('Unquery config', () => {
     )
 
     expect(unquery).toEqual({
-      someValue: '123'
+      someValue: '123',
     })
   })
 
@@ -56,19 +56,19 @@ describe('Unquery config', () => {
     const toParse = '?foo[0]=bar&foo[1]=123&unknown=baz'
     setOptions({
       arrayFormat: 'index',
-      skipUnknown: false
+      skipUnknown: false,
     })
 
     const unquery = Unquery(toParse, {})
     const unquery2 = Unquery(toParse, {
       // "Wrong" value to test compatibility with
       // another type. It should always get the last value
-      foo: Unquery.string()
+      foo: Unquery.string(),
     })
 
     expect(unquery).toEqual({
       foo: ['bar', '123'],
-      unknown: 'baz'
+      unknown: 'baz',
     })
     expect(stringify(unquery)).toBe('foo[0]=bar&foo[1]=123&unknown=baz')
     expect(stringify(unquery, { arrayFormat: 'comma' })).toBe(
@@ -79,7 +79,7 @@ describe('Unquery config', () => {
     )
     expect(unquery2).toEqual({
       foo: '123',
-      unknown: 'baz'
+      unknown: 'baz',
     })
   })
 })

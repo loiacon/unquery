@@ -51,7 +51,7 @@ describe('stringify', () => {
 
   it('should stringify encoded array with commas', () => {
     const obj = {
-      foo: ['zero,one', 'two,three']
+      foo: ['zero,one', 'two,three'],
     }
     expect(stringify(obj)).toBe(`foo=zero%2Cone&foo=two%2Cthree`)
     expect(stringify(obj, { arrayFormat: 'comma' })).toBe(

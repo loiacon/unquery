@@ -13,7 +13,7 @@ describe('addLocationURL', () => {
   })
 
   const query = Unquery('?foo=bar', {
-    foo: Unquery.string()
+    foo: Unquery.string(),
   })
 
   it('should be correct query', () => {
@@ -65,7 +65,7 @@ describe('addLocationURL', () => {
   it('should update correctly using encode', () => {
     const someQuery = {
       '/': 1,
-      email: 'joo@mail.com'
+      email: 'joo@mail.com',
     }
 
     replaceLocationURL(someQuery)

@@ -1,13 +1,15 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { unqueryOptions } from './unqueryOptions'
 import {
   UnqueryType,
   UnqueryOptions,
   UnqueryTypeReturn,
-  UnqueryArrayTypes
+  UnqueryArrayTypes,
+  GenericObject,
 } from './types'
 import formatPrimitive from './formatPrimitive'
 
-export interface ParseKeyOptions {
+export type ParseKeyOptions = {
   key: string
   arrayFormat: UnqueryArrayTypes
   value: string | null
@@ -35,12 +37,12 @@ export function parseKey({ key, value, arrayFormat }: ParseKeyOptions) {
   return { key, isArray }
 }
 
-export interface ParserOptions {
+export type ParserOptions = {
   options: UnqueryOptions
   type: UnqueryType
   key: string
   value: string
-  queryObject: object
+  queryObject: GenericObject
   innerType?: UnqueryTypeReturn
   customCallback?(value: string): never
 }
@@ -52,7 +54,7 @@ export function parser({
   value,
   queryObject,
   innerType,
-  customCallback
+  customCallback,
 }: ParserOptions) {
   if (!innerType) {
     queryObject[key] = formatPrimitive(value, { type, customCallback })
@@ -66,7 +68,7 @@ export function parser({
     if (options.arrayFormat === 'comma') {
       queryObject[key] = value
         .split(',')
-        .map(val => formatPrimitive(val, innerType))
+        .map((val) => formatPrimitive(val, innerType))
     } else {
       queryObject[key] = [formatPrimitive(value, innerType)]
     }

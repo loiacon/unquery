@@ -1,4 +1,5 @@
 import { StringifyOptions, stringify } from './stringify'
+import { GenericObject } from './types'
 
 type LocationQuery<T> = { [k in keyof T]: T[k] } | string
 
@@ -10,7 +11,7 @@ const updateHistory = (url = '') =>
   )
 
 /** Replace all URL search */
-export const replaceLocationURL = <T extends object>(
+export const replaceLocationURL = <T extends GenericObject>(
   query: LocationQuery<T>,
   options?: StringifyOptions
 ) => {
@@ -19,7 +20,7 @@ export const replaceLocationURL = <T extends object>(
 }
 
 /** Add query-string without removing other search */
-export const addLocationURL = <T extends object>(
+export const addLocationURL = <T extends GenericObject>(
   query: LocationQuery<T>,
   options?: StringifyOptions
 ) => {

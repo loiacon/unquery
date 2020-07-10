@@ -20,7 +20,7 @@ const arrayFormatter = (
   arrayFormat: UnqueryArrayOptions['arrayFormat']
 ) => {
   if (arrayFormat === 'comma') {
-    const value = arr.map(val => encode(val as string)).join(',')
+    const value = arr.map((val) => encode(val as string)).join(',')
 
     return value ? `${key}=${value}` : null
   }
@@ -28,7 +28,7 @@ const arrayFormatter = (
 
   switch (arrayFormat) {
     case 'index':
-      return createPair(i => `${key}[${i}]`)
+      return createPair((i) => `${key}[${i}]`)
     case 'bracket':
       return createPair(() => `${key}[]`)
     default:
@@ -38,7 +38,7 @@ const arrayFormatter = (
 
 export type StringifyOptions = UnqueryArrayOptions
 const stringifyOptions = (): StringifyOptions => ({
-  arrayFormat: provideOption('arrayFormat')
+  arrayFormat: provideOption('arrayFormat'),
 })
 
 /** Stringify a query object into string */
@@ -52,7 +52,7 @@ export function stringify(
   const { arrayFormat } = { ...stringifyOptions(), ...options }
 
   return Object.keys(query)
-    .map(key => {
+    .map((key) => {
       const value = query[key]
       if (value == null) {
         return ''

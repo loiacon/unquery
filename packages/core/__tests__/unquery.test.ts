@@ -11,12 +11,12 @@ describe('Unquery', () => {
     const toParse = `?email=someone${arroba}example.com&userId=123`
     const unquery = Unquery(toParse, {
       email: Unquery.string(),
-      userId: Unquery.number()
+      userId: Unquery.number(),
     })
 
     expect(unquery).toEqual({
       email: 'someone@example.com',
-      userId: 123
+      userId: 123,
     })
   })
 
@@ -30,10 +30,10 @@ describe('Unquery', () => {
         userId: Unquery.number(),
         arr: Unquery.array(),
         open: Unquery.bool(),
-        startDate: Unquery.string()
+        startDate: Unquery.string(),
       },
       {
-        arrayFormat: 'comma'
+        arrayFormat: 'comma',
       }
     )
 
@@ -42,7 +42,7 @@ describe('Unquery', () => {
       userId: 4,
       arr: ['foo', 'bar', 'baz'],
       open: true,
-      startDate: '2020-01-01'
+      startDate: '2020-01-01',
     })
     expect(stringify(unquery, { arrayFormat: 'comma' })).toBe(
       `email=foo${arroba}mail.com&userId=4&arr=foo,bar,baz&open=true&startDate=2020-01-01`
@@ -63,7 +63,7 @@ describe('Unquery', () => {
       {
         a: 42,
         b: Unquery.number(),
-        c: Unquery.array(42)
+        c: Unquery.array(42),
       },
       { arrayFormat: 'none' }
     )
@@ -78,7 +78,7 @@ describe('Unquery', () => {
       b: Unquery.string(),
       c: Unquery.string(),
       d: Unquery.string(),
-      e: Unquery.array()
+      e: Unquery.array(),
     })
 
     expect(query).toEqual({ a: 0, b: '0', c: '', d: null, e: null })
@@ -90,13 +90,13 @@ describe('Unquery', () => {
     const query = Unquery(
       toParse,
       {
-        foo: Unquery.array(Unquery.number())
+        foo: Unquery.array(Unquery.number()),
       },
       { arrayFormat: 'comma' }
     )
 
     expect(query).toEqual({
-      foo: [3, 4, 5]
+      foo: [3, 4, 5],
     })
   })
 
@@ -105,11 +105,11 @@ describe('Unquery', () => {
 
     const query = Unquery(toParse, null, {
       arrayFormat: 'comma',
-      skipUnknown: false
+      skipUnknown: false,
     })
 
     expect(query).toEqual({
-      foo: ['3', '4', '5']
+      foo: ['3', '4', '5'],
     })
   })
 
@@ -122,7 +122,7 @@ describe('Unquery', () => {
     )
 
     expect(query).toEqual({
-      foo: ['zero,one', 'two,three']
+      foo: ['zero,one', 'two,three'],
     })
   })
 
@@ -131,30 +131,30 @@ describe('Unquery', () => {
     const query = Unquery(toParse, {
       0: Unquery.number(),
       1: Unquery.number(),
-      2: Unquery.number()
+      2: Unquery.number(),
     })
     expect(query).toEqual({
       0: 1,
       1: 2,
-      2: 4
+      2: 4,
     })
 
     const query2 = Unquery(toParse, {
       0: Unquery.string(),
       1: Unquery.string(),
-      2: Unquery.string()
+      2: Unquery.string(),
     })
     expect(query2).toEqual({
       0: '1',
       1: '2',
-      2: '4'
+      2: '4',
     })
 
     const query3 = Unquery(toParse, {}, { skipUnknown: false })
     expect(query3).toEqual({
       0: '1',
       1: '2',
-      2: '4'
+      2: '4',
     })
   })
 
@@ -169,8 +169,8 @@ describe('Unquery', () => {
   it('should work correctly with custom value', () => {
     const toParse = 'foo=1&bar=2'
     const query = Unquery(toParse, {
-      foo: Unquery.custom(value => +value * 2),
-      bar: Unquery.custom(value => +value * 5)
+      foo: Unquery.custom((value) => +value * 2),
+      bar: Unquery.custom((value) => +value * 5),
     })
 
     expect(query).toEqual({ foo: 2, bar: 10 })
@@ -180,7 +180,7 @@ describe('Unquery', () => {
   it('should custom work without value', () => {
     const toParse = 'foo=1'
     const query = Unquery(toParse, {
-      foo: Unquery.custom()
+      foo: Unquery.custom(),
     })
     expect(query).toEqual({ foo: '1' })
   })
@@ -190,7 +190,7 @@ describe('Unquery', () => {
 
     const toParse = 'foo=1,2,3'
     const query = Unquery(toParse, {
-      foo: Unquery.array(Unquery.custom(value => +value * 2))
+      foo: Unquery.array(Unquery.custom((value) => +value * 2)),
     })
     expect(query).toEqual({ foo: [2, 4, 6] })
     expect(stringify(query)).toBe('foo=2,4,6')
