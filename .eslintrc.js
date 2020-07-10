@@ -2,13 +2,13 @@ module.exports = {
   env: {
     browser: true,
     es6: true,
-    jest: true
+    jest: true,
   },
   extends: [
     'airbnb-base',
     'plugin:@typescript-eslint/recommended',
     'prettier',
-    'prettier/@typescript-eslint'
+    'prettier/@typescript-eslint',
   ],
   globals: {
     Atomics: 'readonly',
@@ -17,7 +17,7 @@ module.exports = {
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 2018,
-    sourceType: 'module'
+    sourceType: 'module',
   },
   plugins: ['prettier', '@typescript-eslint'],
   rules: {
@@ -31,20 +31,21 @@ module.exports = {
       'error',
       'ignorePackages',
       {
-        ts: 'never'
-      }
+        ts: 'never',
+      },
     ],
     '@typescript-eslint/explicit-function-return-type': 'off',
     'no-restricted-globals': 'off',
     'no-plusplus': 'off',
     'no-bitwise': 'off',
-    'no-unused-expressions': ['error', { allowShortCircuit: true }]
+    'no-unused-expressions': ['error', { allowShortCircuit: true }],
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
   },
   settings: {
     'import/resolver': {
       node: {
-        extensions: ['.ts']
-      }
-    }
-  }
+        extensions: ['.ts'],
+      },
+    },
+  },
 }
